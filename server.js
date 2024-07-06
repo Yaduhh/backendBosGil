@@ -8,6 +8,7 @@ const app = express();
 const port = 3000; 
 const ordersRouter = require('./routes/orders');
 const { updateOrder } = require('./controllers/orderController');
+const { updateStatus } = require('./controllers/orderController');
 
 app.use(express.json());
 
@@ -47,6 +48,7 @@ app.post('/orders', (req, res) => {
 // Gunakan router orders untuk semua permintaan ke /orders
 app.use('/getorders', ordersRouter);
 app.post('/orders/:id/refund', updateOrder);
+app.post('/orders/:id/progress', updateStatus);
 
 app.use(cors(corsOptions));
 app.listen(port, () => {

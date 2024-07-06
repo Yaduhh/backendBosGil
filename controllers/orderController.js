@@ -23,3 +23,17 @@ exports.updateOrder = (req, res) => {
     }
   });
 };
+
+exports.updateStatus = (req, res) => {
+  const { id } = req.params;
+  const { progress } = req.body;
+  const query = 'UPDATE orders SET progress = ? WHERE id = ?';
+
+  db.query(query, [progress, id], (err, result) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+    } else {
+      res.json({ message: 'Order updated successfully' });
+    }
+  });
+};

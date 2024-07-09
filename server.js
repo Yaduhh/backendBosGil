@@ -20,7 +20,7 @@ const { updateStatus } = require("./controllers/orderController");
 app.use(express.json());
 
 const corsOptions = {
-  origin: ["http://192.168.1.10:8081", " http:192.168.108.95:8081"],
+  origin: ["http://192.168.1.10:8081", " http://192.168.1.7:8081"],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type"],
 };

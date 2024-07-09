@@ -4,11 +4,9 @@ const db = require("../db");
 const fs = require("fs");
 const path = require("path");
 
-// Rute untuk menghapus item berdasarkan ID
 router.delete("/:id", (req, res) => {
   const id = req.params.id;
 
-  // Query untuk mendapatkan path gambar
   const getImageQuery = "SELECT picture FROM menu WHERE id = ?";
   db.query(getImageQuery, [id], (err, result) => {
     if (err) {
@@ -34,7 +32,6 @@ router.delete("/:id", (req, res) => {
         return res.status(500).send("Error deleting menu item");
       }
 
-      // Hapus file gambar
       fs.unlink(imagePath, (err) => {
         if (err) {
           console.error("Error deleting image file", err);

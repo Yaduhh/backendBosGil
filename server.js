@@ -4,23 +4,36 @@ const axios = require("axios");
 const cors = require("cors");
 const db = require("./db");
 const path = require("path");
-const EventEmitter = require("eventemitter3");
+const multer = require("multer");
 
 const app = express();
 const port = 3000;
 const ordersRouter = require("./routes/orders");
 const menuRouter = require("./routes/menu");
+const deleteMenuRouter = require("./routes/deleteMenu");
+const addProdukRouter = require("./routes/addProduk");
+const editProdukRouter = require("./routes/editProduk");
 const { updateOrder } = require("./controllers/orderController");
 const { updateStatus } = require("./controllers/orderController");
-const { getMenu } = require("./controllers/menuController");
 
 app.use(express.json());
 
 const corsOptions = {
-  origin: "http://192.168.1.10:8081",
-  methods: ["GET", "POST"],
+  origin: ["http://192.168.1.10:8081", " http:192.168.108.95:8081"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type"],
 };
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage: storage });
 
 // Routes
 app.post("/orders", (req, res) => {
@@ -75,6 +88,9 @@ app.post("/orders/:id/refund", updateOrder);
 app.post("/orders/:id/progress", updateStatus);
 
 app.use("/getmenu", menuRouter);
+app.use("/addproduk", addProdukRouter);
+app.use("/delete", deleteMenuRouter);
+app.use("/edit", editProdukRouter);
 
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 app.use(cors(corsOptions));

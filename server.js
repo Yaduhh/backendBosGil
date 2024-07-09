@@ -13,6 +13,7 @@ const menuRouter = require("./routes/menu");
 const deleteMenuRouter = require("./routes/deleteMenu");
 const addProdukRouter = require("./routes/addProduk");
 const editProdukRouter = require("./routes/editProduk");
+const loginRouter = require("./routes/login");
 const { updateOrder } = require("./controllers/orderController");
 const { updateStatus } = require("./controllers/orderController");
 
@@ -91,6 +92,7 @@ app.use("/getmenu", menuRouter);
 app.use("/addproduk", addProdukRouter);
 app.use("/delete", deleteMenuRouter);
 app.use("/edit", editProdukRouter);
+app.use("/login", loginRouter);
 
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 app.use(cors(corsOptions));

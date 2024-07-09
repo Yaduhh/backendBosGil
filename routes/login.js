@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const jwt = require("jsonwebtoken");
 const db = require("../db");
+
+const SECRET_KEY = "Nrp5kvfBiy1mjd8YZSxwQgajqbwukwFo";
 
 router.post("/", (req, res) => {
   const { username, password } = req.body;
@@ -13,11 +16,14 @@ router.post("/", (req, res) => {
     }
 
     if (result.length > 0) {
-      res.json({ success: true, message: "Login berhasil" });
+      // Buat token JWT
+      const token = jwt.sign({ username: username }, SECRET_KEY, {
+        expiresIn: "1d",
+      });
+      res.json({ success: true, message: "Login berhasil", token: token });
     } else {
       res.json({ success: false, message: "Username atau password salah" });
     }
   });
 });
-
 module.exports = router;

@@ -13,9 +13,11 @@ const menuRouter = require("./routes/menu");
 const deleteMenuRouter = require("./routes/deleteMenu");
 const addProdukRouter = require("./routes/addProduk");
 const editProdukRouter = require("./routes/editProduk");
+const editUserRouter = require("./routes/updateUser");
 const loginRouter = require("./routes/login");
 const { updateOrder } = require("./controllers/orderController");
 const { updateStatus } = require("./controllers/orderController");
+const { deleteOrder } = require("./controllers/orderController");
 
 app.use(express.json());
 
@@ -38,7 +40,7 @@ const upload = multer({ storage: storage });
 
 // Routes
 app.post("/orders", (req, res) => {
-  const { nama, pesanan, price, normalprice } = req.body;
+  const { nama, pesanan, price, normalprice, cashier } = req.body;
 
   // Validasi bahwa 'nama' tidak boleh kosong
   if (!nama || nama.trim() === "") {
@@ -60,7 +62,7 @@ app.post("/orders", (req, res) => {
   const progress = false;
 
   const sql =
-    "INSERT INTO orders (name, pesanan, normalprice, price, status, refund, progress, date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    "INSERT INTO orders (name, pesanan, normalprice, price, status, refund, progress, date, cashier) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
   db.query(
     sql,
     [
@@ -72,6 +74,7 @@ app.post("/orders", (req, res) => {
       refund,
       progress,
       formattedDate,
+      cashier,
     ],
     (err, result) => {
       if (err) {
@@ -87,12 +90,14 @@ app.post("/orders", (req, res) => {
 app.use("/getorders", ordersRouter);
 app.post("/orders/:id/refund", updateOrder);
 app.post("/orders/:id/progress", updateStatus);
+app.delete("/orders/:id", deleteOrder);
 
 app.use("/getmenu", menuRouter);
 app.use("/addproduk", addProdukRouter);
 app.use("/delete", deleteMenuRouter);
 app.use("/edit", editProdukRouter);
 app.use("/login", loginRouter);
+app.use("/", editUserRouter);
 
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 app.use(cors(corsOptions));

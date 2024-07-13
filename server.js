@@ -18,31 +18,45 @@ const loginRouter = require("./routes/login");
 const { updateOrder } = require("./controllers/orderController");
 const { updateStatus } = require("./controllers/orderController");
 const { deleteOrder } = require("./controllers/orderController");
+const { uploadOrderImage } = require("./controllers/orderController");
+const { getOrderNameMiddleware } = require("./controllers/orderController");
 
 app.use(express.json());
 
 const corsOptions = {
-  origin: ["http://192.168.1.10:8081", " http://192.168.1.7:8081"],
+  origin: "*", // Mengizinkan semua domain
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type"],
 };
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
+// const corsOptions = {
+//   origin: [
+//     "http://192.168.1.7:8081",
+//     "http://192.168.1.10:8081",
+//     "http://192.168.1.6",
+//     "fe80::e8c1:2dff:fe:4d:9354",
+//   ],
+//   methods: ["GET", "POST", "PUT", "DELETE"],
+//   allowedHeaders: ["Content-Type"],
+// };
 
-const upload = multer({ storage: storage });
+app.use(cors(corsOptions));
+
+const allowedIPs = [
+  "192.168.1.7",
+  "192.168.1.10",
+  "192.168.1.6",
+  "fe80::e8c1:2dff:fe:4d:9354",
+];
+
+app.use((req, res, next) => {
+  next();
+});
 
 // Routes
 app.post("/orders", (req, res) => {
-  const { nama, pesanan, price, normalprice, cashier } = req.body;
+  const { nama, pesanan, price, normalprice, cashier, noted } = req.body;
 
-  // Validasi bahwa 'nama' tidak boleh kosong
   if (!nama || nama.trim() === "") {
     return res.status(400).send("Nama pelanggan harus diisi");
   }
@@ -56,13 +70,12 @@ app.post("/orders", (req, res) => {
     now.getSeconds()
   ).padStart(2, "0")}`;
 
-  // Lanjutkan dengan penyimpanan ke database jika valid
   const status = false;
   const refund = 0;
   const progress = false;
 
   const sql =
-    "INSERT INTO orders (name, pesanan, normalprice, price, status, refund, progress, date, cashier) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    "INSERT INTO orders (name, pesanan, normalprice, price, status, refund, progress, date, cashier, noted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   db.query(
     sql,
     [
@@ -75,6 +88,7 @@ app.post("/orders", (req, res) => {
       progress,
       formattedDate,
       cashier,
+      noted,
     ],
     (err, result) => {
       if (err) {
@@ -88,7 +102,12 @@ app.post("/orders", (req, res) => {
 
 // Gunakan router orders untuk semua permintaan ke /orders
 app.use("/getorders", ordersRouter);
-app.post("/orders/:id/refund", updateOrder);
+app.post(
+  "/orders/:id/refund",
+  getOrderNameMiddleware,
+  uploadOrderImage,
+  updateOrder
+);
 app.post("/orders/:id/progress", updateStatus);
 app.delete("/orders/:id", deleteOrder);
 
@@ -100,7 +119,7 @@ app.use("/login", loginRouter);
 app.use("/", editUserRouter);
 
 app.use("/assets", express.static(path.join(__dirname, "assets")));
-app.use(cors(corsOptions));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });

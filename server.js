@@ -26,7 +26,7 @@ const reduceStockRouter = require("./routes/reduceStock");
 app.use(express.json());
 
 const corsOptions = {
-  origin: "*", // Mengizinkan semua domain
+  origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type"],
 };
@@ -35,21 +35,17 @@ const corsOptions = {
 //   origin: [
 //     "http://192.168.1.7:8081",
 //     "http://192.168.1.10:8081",
-//     "http://192.168.1.6",
-//     "fe80::e8c1:2dff:fe:4d:9354",
+//     "http://192.168.1.2",
+//     "http://192.168.1.3:3000",
+//     "http://114.124.179.67",
+//     "http://103.18.34.185",
+//     "http://fe80::e8c1:2dff:fe:4d:9354",
 //   ],
 //   methods: ["GET", "POST", "PUT", "DELETE"],
 //   allowedHeaders: ["Content-Type"],
 // };
 
 app.use(cors(corsOptions));
-
-const allowedIPs = [
-  "192.168.1.7",
-  "192.168.1.10",
-  "192.168.1.6",
-  "fe80::e8c1:2dff:fe:4d:9354",
-];
 
 app.use((req, res, next) => {
   next();
@@ -124,6 +120,6 @@ app.use("/", editUserRouter);
 
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`Server running at http://localhost:${port}`);
 });

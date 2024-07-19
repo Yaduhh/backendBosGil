@@ -18,7 +18,7 @@ const upload = multer({ storage: storage });
 
 router.put("/:id", upload.single("picture"), (req, res) => {
   const id = req.params.id;
-  const { name, detail, price, status } = req.body;
+  const { name, detail, price, status, stock } = req.body;
   const picture = req.file ? req.file.filename : null;
 
   // Find existing item to get the old picture
@@ -37,12 +37,12 @@ router.put("/:id", upload.single("picture"), (req, res) => {
 
     // Update query
     const updateQuery = picture
-      ? "UPDATE menu SET name = ?, detail = ?, price = ?, status = ?, picture = ? WHERE id = ?"
-      : "UPDATE menu SET name = ?, detail = ?, price = ?, status = ? WHERE id = ?";
+      ? "UPDATE menu SET name = ?, detail = ?, price = ?, status = ?, stock = ?,  picture = ? WHERE id = ?"
+      : "UPDATE menu SET name = ?, detail = ?, price = ?, status = ?, stock = ? WHERE id = ?";
 
     const queryParams = picture
-      ? [name, detail, price, status, picture, id]
-      : [name, detail, price, status, id];
+      ? [name, detail, price, status, stock, picture, id]
+      : [name, detail, price, status, stock, id];
 
     db.query(updateQuery, queryParams, (updateErr, result) => {
       if (updateErr) {

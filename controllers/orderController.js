@@ -88,6 +88,7 @@ exports.updateStatus = (req, res) => {
 
 exports.deleteOrder = (req, res) => {
   const { id } = req.params;
+  const { parsedPesanan } = req.body; // Ambil parsedPesanan dari body request
 
   // Dapatkan nama file gambar yang terkait dengan order
   const queryGetImage = "SELECT image FROM orders WHERE id = ?";
@@ -118,8 +119,20 @@ exports.deleteOrder = (req, res) => {
         fs.unlink(imagePath, (err) => {
           if (err) {
             console.error("Failed to delete image file:", err);
-            // Tidak mengembalikan kesalahan, karena order sudah dihapus dari database
           }
+        });
+      }
+
+      // Update stok menu berdasarkan parsedPesanan
+      if (parsedPesanan) {
+        parsedPesanan.forEach((item) => {
+          const queryUpdateStock =
+            "UPDATE menu SET stock = stock + ? WHERE name = ?";
+          db.query(queryUpdateStock, [item.jumlah, item.menu], (err) => {
+            if (err) {
+              console.error("Failed to update menu stock:", err);
+            }
+          });
         });
       }
 

@@ -20,6 +20,8 @@ const { updateStatus } = require("./controllers/orderController");
 const { deleteOrder } = require("./controllers/orderController");
 const { uploadOrderImage } = require("./controllers/orderController");
 const { getOrderNameMiddleware } = require("./controllers/orderController");
+const checkStockRouter = require("./routes/checkStock");
+const reduceStockRouter = require("./routes/reduceStock");
 
 app.use(express.json());
 
@@ -111,6 +113,8 @@ app.post(
 app.post("/orders/:id/progress", updateStatus);
 app.delete("/orders/:id", deleteOrder);
 
+app.use("/checkStock", checkStockRouter);
+app.use("/reduceStock", reduceStockRouter);
 app.use("/getmenu", menuRouter);
 app.use("/addproduk", addProdukRouter);
 app.use("/delete", deleteMenuRouter);

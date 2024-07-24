@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 19 Jul 2024 pada 10.18
+-- Waktu pembuatan: 24 Jul 2024 pada 12.47
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.2.12
 
@@ -44,34 +44,34 @@ CREATE TABLE `menu` (
 --
 
 INSERT INTO `menu` (`id`, `typemenu`, `picture`, `name`, `detail`, `price`, `type`, `status`, `stock`) VALUES
-(1, 1, 'paketBosgilDada.jpg', 'Paket Bosgil Dada', 'Nasi + Ayam Dada + Sambal', 30000, 1, 1, 89),
-(2, 1, 'paketDuaLebihMurah.jpg', 'Paket 2 Lebih Murah', '2 Nasi + 2 Ayam + 2 Sambal', 55000, 1, 1, 188),
-(3, 1, 'ayamSeekor.jpg', 'Ayam 1 Ekor', 'Ayam 1 Ekor + Sambal', 60000, 1, 1, 138),
-(7, 2, 'paketDuaLebihMurah.jpg', 'Paket 2 Lebih Murah', '2 Nasi + 2 Ayam + 2 Sambal', 55000, 1, 1, 104),
-(8, 2, 'ayamPaha.jpg', 'Paket Paha BOSGIL', 'Nasi + Ayam Paha + Sambal', 30000, 1, 1, 180),
-(11, 2, 'paketbosgildada.jpg', 'Paket Bosgil Dada', 'Nasi + Ayam Dada + Sambal', 30000, 1, 1, 348),
-(12, 2, 'nasiKambing.jpg', 'Paket Kambing Bosgil', 'Nasi + Kambing Bosgil + Sambal', 75000, 1, 1, 188),
-(15, 3, 'loyangMiniAyam.jpg', 'Loyang Mini Ayam', 'Nasi + 3 Ayam + Sambal', 100000, 1, 1, 245),
-(16, 3, 'loyangSedangAyam.jpg', 'Loyang Sedang Ayam', 'Nasi + 5 Potong Ayam + Sambal', 160000, 1, 1, 224),
-(17, 3, 'loyangBesar10Ayam.jpg', 'Loyang Ayam Besar', 'Nasi + 10 Potong Ayam + Sambal', 310000, 1, 1, 397),
-(18, 3, 'loyangMiniKambing.jpg', 'Loyang Mini Kambing', 'Nasi+ 3 Porong Kambing + Sambal', 210000, 1, 1, 118),
-(19, 3, 'loyangSedangKambing.jpg', 'Loyang Kambing Sedang', 'Nasi + 5 Potong Kambing + Sambal', 310000, 1, 1, 598),
-(20, 3, 'loyangBesarKambing.jpg', 'Loyang Besar Kambing', 'Nasi + 10 Potong Kambing + Sambal', 610000, 1, 1, 298),
-(21, 3, 'loyangMiniMix.jpg', 'Loyang Mini MIX', 'Nasi + 2 Ayam + 1 Potong Kambing + Sambal', 160000, 1, 1, 297),
-(22, 3, 'loyangSedangMix.jpg', 'Loyang MIX Sedang', 'Nasi + 3 Ayam + 2 Kambing + Sambal', 260000, 1, 1, 197),
-(23, 3, 'loyangBesarMix.jpg', 'Loyang Besar MIX', 'Nasi + 5 Ayam + 5 Kambing + Sambal', 510000, 1, 1, 445),
-(24, 4, 'esTeh.jpg', 'Teh Bos', 'Es Teh Manis', 8000, 2, 1, 509),
-(25, 4, 'tehTarikDingin.jpg', 'Teh Tarik', 'Es Teh Susu', 10000, 2, 1, 590),
-(26, 4, 'cocacola.jpg', 'Coca Cola', 'Coca Cola', 8000, 2, 1, 92),
-(27, 4, 'airMineral.jpg', 'Air Mineral', 'Air Mineral 600 Ml', 7000, 2, 1, 88),
-(28, 4, 'fanta.jpg', 'Fanta', 'Soft Drink', 8000, 2, 1, 294),
-(29, 4, 'sprite.jpg', 'Sprite', 'Soft Drink', 8000, 2, 1, 451),
-(30, 5, 'kambingPerpotong.jpg', 'Kambing Perpotong', 'Kambing Perpotong + Sambal', 60000, 1, 1, 447),
-(31, 5, 'sambalBungkus.jpg', 'Sambol Bungkus', 'Sambal Bosgil Perporsi', 5000, 1, 1, 442),
-(33, 5, 'nasi.jpg', 'Nasi Saja', 'Nasi + Sambal', 19000, 1, 1, 247),
-(34, 5, 'sambalBotol.jpg', 'Sambal Botol', 'Sambal Bosgil Perbotol', 25000, 1, 1, 548),
-(37, 5, 'ayamPaha.jpg', 'Ayam Paha Bosgil', 'Ayam Perpotong + Sambal', 25000, 1, 1, 442),
-(38, 5, 'ayamDadaPerpotong.jpg', 'Ayam Bossgil Dada', 'Ayam Perpotong + Sambal', 25000, 1, 1, 97);
+(1, 1, 'paketBosgilDada.jpg', 'Paket Bosgil Dada', 'Nasi + Ayam Dada + Sambal', 30000, 1, 1, 100),
+(2, 1, 'paketDuaLebihMurah.jpg', 'Paket 2 Lebih Murah', '2 Nasi + 2 Ayam + 2 Sambal', 55000, 1, 0, 100),
+(3, 1, 'ayamSeekor.jpg', 'Ayam 1 Ekor', 'Ayam 1 Ekor + Sambal', 60000, 1, 1, 100),
+(7, 2, 'paketDuaLebihMurah.jpg', 'Paket 2 Lebih Murah', '2 Nasi + 2 Ayam + 2 Sambal', 55000, 1, 1, 98),
+(8, 2, 'ayamPaha.jpg', 'Paket Paha BOSGIL', 'Nasi + Ayam Paha + Sambal', 30000, 1, 1, 96),
+(11, 2, 'paketbosgildada.jpg', 'Paket Bosgil Dada', 'Nasi + Ayam Dada + Sambal', 30000, 1, 1, 99),
+(12, 2, 'nasiKambing.jpg', 'Paket Kambing Bosgil', 'Nasi + Kambing Bosgil + Sambal', 75000, 1, 1, 99),
+(15, 3, 'loyangMiniAyam.jpg', 'Loyang Mini Ayam', 'Nasi + 3 Ayam + Sambal', 100000, 1, 1, 100),
+(16, 3, 'loyangSedangAyam.jpg', 'Loyang Sedang Ayam', 'Nasi + 5 Potong Ayam + Sambal', 160000, 1, 1, 100),
+(17, 3, 'loyangBesar10Ayam.jpg', 'Loyang Ayam Besar', 'Nasi + 10 Potong Ayam + Sambal', 310000, 1, 1, 100),
+(18, 3, 'loyangMiniKambing.jpg', 'Loyang Mini Kambing', 'Nasi+ 3 Porong Kambing + Sambal', 210000, 1, 1, 100),
+(19, 3, 'loyangSedangKambing.jpg', 'Loyang Kambing Sedang', 'Nasi + 5 Potong Kambing + Sambal', 310000, 1, 1, 100),
+(20, 3, 'loyangBesarKambing.jpg', 'Loyang Besar Kambing', 'Nasi + 10 Potong Kambing + Sambal', 610000, 1, 1, 100),
+(21, 3, 'loyangMiniMix.jpg', 'Loyang Mini MIX', 'Nasi + 2 Ayam + 1 Potong Kambing + Sambal', 160000, 1, 1, 100),
+(22, 3, 'loyangSedangMix.jpg', 'Loyang MIX Sedang', 'Nasi + 3 Ayam + 2 Kambing + Sambal', 260000, 1, 1, 100),
+(23, 3, 'loyangBesarMix.jpg', 'Loyang Besar MIX', 'Nasi + 5 Ayam + 5 Kambing + Sambal', 510000, 1, 1, 100),
+(24, 4, 'esTeh.jpg', 'Teh Bos', 'Es Teh Manis', 8000, 2, 1, 99),
+(25, 4, 'tehTarikDingin.jpg', 'Teh Tarik', 'Es Teh Susu', 10000, 2, 1, 98),
+(26, 4, 'cocacola.jpg', 'Coca Cola', 'Coca Cola', 8000, 2, 1, 99),
+(27, 4, 'airMineral.jpg', 'Air Mineral', 'Air Mineral 600 Ml', 7000, 2, 1, 100),
+(28, 4, 'fanta.jpg', 'Fanta', 'Soft Drink', 8000, 2, 1, 100),
+(29, 4, 'sprite.jpg', 'Sprite', 'Soft Drink', 8000, 2, 1, 100),
+(30, 5, 'kambingPerpotong.jpg', 'Kambing Perpotong', 'Kambing Perpotong + Sambal', 60000, 1, 1, 100),
+(31, 5, 'sambalBungkus.jpg', 'Sambol Bungkus', 'Sambal Bosgil Perporsi', 5000, 1, 1, 100),
+(33, 5, 'nasi.jpg', 'Nasi Saja', 'Nasi + Sambal', 19000, 1, 1, 100),
+(34, 5, 'sambalBotol.jpg', 'Sambal Botol', 'Sambal Bosgil Perbotol', 25000, 1, 1, 100),
+(37, 5, 'ayamPaha.jpg', 'Ayam Paha Bosgil', 'Ayam Perpotong + Sambal', 25000, 1, 1, 100),
+(38, 5, 'ayamDadaPerpotong.jpg', 'Ayam Bossgil Dada', 'Ayam Perpotong + Sambal', 25000, 1, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -122,7 +122,10 @@ INSERT INTO `orders` (`id`, `name`, `pesanan`, `normalprice`, `price`, `status`,
 (242, 'Faril Ritonga', '[{\"id\":31,\"menu\":\"Sambol Bungkus\",\"hargasatuan\":5000,\"jumlah\":8},{\"id\":30,\"menu\":\"Kambing Perpotong\",\"hargasatuan\":60000,\"jumlah\":4},{\"id\":37,\"menu\":\"Ayam Paha Bosgil\",\"hargasatuan\":25000,\"jumlah\":2},{\"id\":34,\"menu\":\"Sambal Botol\",\"hargasatuan\":25000,\"jumlah\":2},{\"id\":33,\"menu\":\"Nasi Saja\",\"hargasatuan\":19000,\"jumlah\":2}]', 418000, 418000, 1, '2024-07-19 14:00:06', 2000, 420000, 1, 5, '', ''),
 (243, 'Dora The Explorer', '[{\"id\":37,\"menu\":\"Ayam Paha Bosgil\",\"hargasatuan\":25000,\"jumlah\":3},{\"id\":38,\"menu\":\"Ayam Bossgil Dada\",\"hargasatuan\":25000,\"jumlah\":1},{\"id\":33,\"menu\":\"Nasi Saja\",\"hargasatuan\":19000,\"jumlah\":2},{\"id\":34,\"menu\":\"Sambal Botol\",\"hargasatuan\":25000,\"jumlah\":1}]', 163000, 163000, 1, '2024-07-19 14:01:04', 0, 163000, 1, 5, '', ''),
 (244, 'Madun', '[{\"id\":1,\"menu\":\"Paket Bosgil Dada\",\"hargasatuan\":30000,\"jumlah\":1},{\"id\":2,\"menu\":\"Paket 2 Lebih Murah\",\"hargasatuan\":55000,\"jumlah\":1},{\"id\":3,\"menu\":\"Ayam 1 Ekor\",\"hargasatuan\":60000,\"jumlah\":1},{\"id\":7,\"menu\":\"Paket 2 Lebih Murah\",\"hargasatuan\":55000,\"jumlah\":2}]', 255000, 255000, 1, '2024-07-19 14:03:02', 0, 255000, 1, 5, '', ''),
-(245, 'Opet', '[{\"id\":8,\"menu\":\"Paket Paha BOSGIL\",\"hargasatuan\":30000,\"jumlah\":4}]', 120000, 120000, 1, '2024-07-19 14:27:11', 30000, 150000, 1, 5, '', '');
+(245, 'Opet', '[{\"id\":8,\"menu\":\"Paket Paha BOSGIL\",\"hargasatuan\":30000,\"jumlah\":4}]', 120000, 120000, 1, '2024-07-19 14:27:11', 30000, 150000, 1, 5, '', ''),
+(248, 'Dila intan Prisilia', '[{\"id\":25,\"menu\":\"Teh Tarik\",\"hargasatuan\":10000,\"jumlah\":2},{\"id\":24,\"menu\":\"Teh Bos\",\"hargasatuan\":8000,\"jumlah\":1},{\"id\":26,\"menu\":\"Coca Cola\",\"hargasatuan\":8000,\"jumlah\":1},{\"id\":27,\"menu\":\"Air Mineral\",\"hargasatuan\":7000,\"jumlah\":1},{\"id\":29,\"menu\":\"Sprite\",\"hargasatuan\":8000,\"jumlah\":2},{\"id\":28,\"menu\":\"Fanta\",\"hargasatuan\":8000,\"jumlah\":2}]', 75000, 75000, 1, '2024-07-19 17:16:32', 0, 75000, 1, 5, '', 'Dila_intan_Prisilia_2024-07-19_17-33-53.jpg'),
+(250, 'Xaviera', '[{\"id\":7,\"menu\":\"Paket 2 Lebih Murah\",\"hargasatuan\":55000,\"jumlah\":1},{\"id\":8,\"menu\":\"Paket Paha BOSGIL\",\"hargasatuan\":30000,\"jumlah\":2},{\"id\":11,\"menu\":\"Paket Bosgil Dada\",\"hargasatuan\":30000,\"jumlah\":1},{\"id\":12,\"menu\":\"Paket Kambing Bosgil\",\"hargasatuan\":75000,\"jumlah\":1}]', 220000, 220000, 0, '2024-07-21 20:18:37', 0, 0, 0, 5, '', ''),
+(251, 'Kak Ros', '[{\"id\":7,\"menu\":\"Paket 2 Lebih Murah\",\"hargasatuan\":55000,\"jumlah\":1},{\"id\":8,\"menu\":\"Paket Paha BOSGIL\",\"hargasatuan\":30000,\"jumlah\":2},{\"id\":24,\"menu\":\"Teh Bos\",\"hargasatuan\":8000,\"jumlah\":1},{\"id\":25,\"menu\":\"Teh Tarik\",\"hargasatuan\":10000,\"jumlah\":2},{\"id\":26,\"menu\":\"Coca Cola\",\"hargasatuan\":8000,\"jumlah\":1}]', 151000, 151000, 1, '2024-07-21 20:22:57', 4000, 155000, 1, 5, 'Sambal dipisah', 'Kak_Ros_2024-07-21_20-26-36.jpg');
 
 -- --------------------------------------------------------
 
@@ -176,13 +179,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT untuk tabel `menu`
 --
 ALTER TABLE `menu`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- AUTO_INCREMENT untuk tabel `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=246;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=252;
 
 --
 -- AUTO_INCREMENT untuk tabel `users`

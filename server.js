@@ -53,7 +53,8 @@ app.use((req, res, next) => {
 
 // Routes
 app.post("/orders", (req, res) => {
-  const { nama, pesanan, price, normalprice, cashier, noted } = req.body;
+  const { nama, pesanan, price, normalprice, cashier, noted, nophone } =
+    req.body;
 
   if (!nama || nama.trim() === "") {
     return res.status(400).send("Nama pelanggan harus diisi");
@@ -73,7 +74,7 @@ app.post("/orders", (req, res) => {
   const progress = false;
 
   const sql =
-    "INSERT INTO orders (name, pesanan, normalprice, price, status, refund, progress, date, cashier, noted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    "INSERT INTO orders (name, pesanan, normalprice, price, status, refund, progress, date, cashier, noted, nophone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   db.query(
     sql,
     [
@@ -87,6 +88,7 @@ app.post("/orders", (req, res) => {
       formattedDate,
       cashier,
       noted,
+      nophone,
     ],
     (err, result) => {
       if (err) {

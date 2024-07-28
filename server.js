@@ -10,6 +10,7 @@ const app = express();
 const port = 3000;
 const ordersRouter = require("./routes/orders");
 const menuRouter = require("./routes/menu");
+const daftarAkunRouter = require("./routes/daftarAkun");
 const deleteMenuRouter = require("./routes/deleteMenu");
 const addProdukRouter = require("./routes/addProduk");
 const editProdukRouter = require("./routes/editProduk");
@@ -30,20 +31,6 @@ const corsOptions = {
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type"],
 };
-
-// const corsOptions = {
-//   origin: [
-//     "http://192.168.1.7:8081",
-//     "http://192.168.1.10:8081",
-//     "http://192.168.1.2",
-//     "http://192.168.1.3:3000",
-//     "http://114.124.179.67",
-//     "http://103.18.34.185",
-//     "http://fe80::e8c1:2dff:fe:4d:9354",
-//   ],
-//   methods: ["GET", "POST", "PUT", "DELETE"],
-//   allowedHeaders: ["Content-Type"],
-// };
 
 app.use(cors(corsOptions));
 
@@ -110,6 +97,8 @@ app.post(
 );
 app.post("/orders/:id/progress", updateStatus);
 app.delete("/orders/:id", deleteOrder);
+
+app.use("/daftarAkun", daftarAkunRouter);
 
 app.use("/checkStock", checkStockRouter);
 app.use("/reduceStock", reduceStockRouter);

@@ -19,9 +19,9 @@ router.post("/", (req, res) => {
 
     if (result.length > 0) {
       const user = result[0];
-      const { username, name, id } = user;
+      const { username, name, role, id } = user;
       const token = jwt.sign(
-        { username: username, name: name, id: id },
+        { username: username, name: name, role: role, id: id },
         SECRET_KEY,
         {
           expiresIn: "1d",
@@ -33,6 +33,7 @@ router.post("/", (req, res) => {
         token: token,
         name: name,
         username: username,
+        role: role,
         id: id,
       });
     } else {

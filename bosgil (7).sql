@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 26 Jul 2024 pada 15.43
+-- Waktu pembuatan: 28 Jul 2024 pada 05.10
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.2.12
 
@@ -160,16 +160,19 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
   `username` varchar(25) NOT NULL,
-  `password` varchar(50) NOT NULL
+  `password` varchar(50) NOT NULL,
+  `role` int(11) NOT NULL,
+  `gender` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `username`, `password`) VALUES
-(2, 'Gamal Musthofa', 'gamalshine', '9c7183d0848dab5480bfb6cd8157ca1a'),
-(5, 'Vegantropus', 'vegaspro@gmail.com', 'adf8433f6a83858e2b6f6bb204845ff5');
+INSERT INTO `users` (`id`, `name`, `username`, `password`, `role`, `gender`) VALUES
+(2, 'Vegantropus', 'vegantropus@gmail.com', '9c7183d0848dab5480bfb6cd8157ca1a', 1, 0),
+(5, 'Vega Anggara', 'vegaspro@gmail.com', 'adf8433f6a83858e2b6f6bb204845ff5', 2, 0),
+(6, 'Xaviera', 'xaviera@gmail.com', 'adf8433f6a83858e2b6f6bb204845ff5', 3, 1);
 
 --
 -- Indexes for dumped tables
@@ -214,7 +217,7 @@ ALTER TABLE `orders`
 -- AUTO_INCREMENT untuk tabel `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)

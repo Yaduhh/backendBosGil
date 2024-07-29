@@ -16,6 +16,7 @@ const addProdukRouter = require("./routes/addProduk");
 const editProdukRouter = require("./routes/editProduk");
 const editUserRouter = require("./routes/updateUser");
 const loginRouter = require("./routes/login");
+const registerRouter = require("./routes/register");
 const { updateOrder } = require("./controllers/orderController");
 const { updateStatus } = require("./controllers/orderController");
 const { deleteOrder } = require("./controllers/orderController");
@@ -23,6 +24,8 @@ const { uploadOrderImage } = require("./controllers/orderController");
 const { getOrderNameMiddleware } = require("./controllers/orderController");
 const checkStockRouter = require("./routes/checkStock");
 const reduceStockRouter = require("./routes/reduceStock");
+
+const akunController = require("./controllers/akunController");
 
 app.use(express.json());
 
@@ -40,8 +43,17 @@ app.use((req, res, next) => {
 
 // Routes
 app.post("/orders", (req, res) => {
-  const { nama, pesanan, price, normalprice, cashier, noted, nophone } =
-    req.body;
+  const {
+    nama,
+    pesanan,
+    price,
+    normalprice,
+    cashier,
+    noted,
+    nophone,
+    alamat,
+    ongkir,
+  } = req.body;
 
   if (!nama || nama.trim() === "") {
     return res.status(400).send("Nama pelanggan harus diisi");
@@ -60,8 +72,10 @@ app.post("/orders", (req, res) => {
   const refund = 0;
   const progress = false;
 
+  console.log(nophone + ongkir);
+
   const sql =
-    "INSERT INTO orders (name, pesanan, normalprice, price, status, refund, progress, date, cashier, noted, nophone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    "INSERT INTO orders (name, pesanan, normalprice, price, status, refund, progress, date, cashier, noted, nophone, alamat, ongkir) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   db.query(
     sql,
     [
@@ -76,6 +90,8 @@ app.post("/orders", (req, res) => {
       cashier,
       noted,
       nophone,
+      alamat,
+      ongkir,
     ],
     (err, result) => {
       if (err) {
@@ -98,7 +114,7 @@ app.post(
 app.post("/orders/:id/progress", updateStatus);
 app.delete("/orders/:id", deleteOrder);
 
-app.use("/daftarAkun", daftarAkunRouter);
+// app.use("/daftarAkun", daftarAkunRouter);
 
 app.use("/checkStock", checkStockRouter);
 app.use("/reduceStock", reduceStockRouter);
@@ -106,8 +122,16 @@ app.use("/getmenu", menuRouter);
 app.use("/addproduk", addProdukRouter);
 app.use("/delete", deleteMenuRouter);
 app.use("/edit", editProdukRouter);
+
+// Login & register
+app.use("/register", registerRouter);
 app.use("/login", loginRouter);
 app.use("/", editUserRouter);
+
+// Khusus Admin
+app.get("/daftarAkun", akunController.getAccounts);
+app.delete("/deleteAkun/:id", akunController.deleteAccount);
+app.put("/editAkun/:id", akunController.editAccount);
 
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

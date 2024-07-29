@@ -19,26 +19,36 @@ router.post("/", (req, res) => {
 
     if (result.length > 0) {
       const user = result[0];
-      const { username, name, role, id } = user;
-      const token = jwt.sign(
-        { username: username, name: name, role: role, id: id },
-        SECRET_KEY,
-        {
-          expiresIn: "1d",
-        }
-      );
-      res.json({
-        success: true,
-        message: "Login berhasil",
-        token: token,
-        name: name,
-        username: username,
-        role: role,
-        id: id,
-      });
+
+      // Check if the status is 0
+      if (user.status === 0) {
+        const { username, name, role, id } = user;
+        const token = jwt.sign(
+          { username: username, name: name, role: role, id: id },
+          SECRET_KEY,
+          {
+            expiresIn: "1d",
+          }
+        );
+        res.json({
+          success: true,
+          message: "Login berhasil",
+          token: token,
+          name: name,
+          username: username,
+          role: role,
+          id: id,
+        });
+      } else {
+        res.json({
+          success: false,
+          message: "Oops.. Akun Tidak Aktif !",
+        });
+      }
     } else {
       res.json({ success: false, message: "Username atau password salah" });
     }
   });
 });
+
 module.exports = router;

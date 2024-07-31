@@ -16,6 +16,10 @@ exports.getAccounts = async (req, res) => {
 exports.deleteAccount = async (req, res) => {
   const { id } = req.params;
   try {
+    // Set cashier reference to NULL in orders table
+    await db.query("UPDATE orders SET cashier = NULL WHERE cashier = ?", [id]);
+
+    // Now delete the user
     await db.query("DELETE FROM users WHERE id = ?", [id]);
     res.status(200).send("Account deleted successfully");
   } catch (error) {

@@ -18,9 +18,11 @@ const editUserRouter = require("./routes/updateUser");
 const loginRouter = require("./routes/login");
 const registerRouter = require("./routes/register");
 const { updateOrder } = require("./controllers/orderController");
+const { updateOrderDp } = require("./controllers/orderController");
 const { updateStatus } = require("./controllers/orderController");
 const { deleteOrder } = require("./controllers/orderController");
 const { uploadOrderImage } = require("./controllers/orderController");
+const { uploadOrderImageDp } = require("./controllers/orderController");
 const { getOrderNameMiddleware } = require("./controllers/orderController");
 const checkStockRouter = require("./routes/checkStock");
 const reduceStockRouter = require("./routes/reduceStock");
@@ -120,6 +122,12 @@ app.post(
   getOrderNameMiddleware,
   uploadOrderImage,
   updateOrder
+);
+app.post(
+  "/orders/:id/dp",
+  getOrderNameMiddleware,
+  uploadOrderImageDp,
+  updateOrderDp
 );
 app.post("/orders/:id/progress", updateStatus);
 app.delete("/orders/:id", deleteOrder);

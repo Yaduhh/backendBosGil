@@ -26,7 +26,7 @@ const getOrderNameMiddleware = (req, res, next) => {
       return res.status(404).json({ error: "Order not found" });
     }
 
-    req.orderName = results[0].name.replace(/\s+/g, "_"); // Ganti spasi dengan underscore
+    req.orderName = results[0].name.replace(/\s+/g, "_");
     next();
   });
 };
@@ -52,8 +52,31 @@ const storage = multer.diskStorage({
   },
 });
 
+const storageImageDp = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/dp"); // Folder khusus untuk imageDp
+  },
+  filename: (req, file, cb) => {
+    const orderName = req.orderName || Date.now();
+    const now = new Date();
+    const formattedDate = `${now.getFullYear()}-${String(
+      now.getMonth() + 1
+    ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}_${String(
+      now.getHours()
+    ).padStart(2, "0")}-${String(now.getMinutes()).padStart(2, "0")}-${String(
+      now.getSeconds()
+    ).padStart(2, "0")}`;
+    const filename = `${orderName}_${formattedDate}${path.extname(
+      file.originalname
+    )}`;
+    cb(null, filename);
+  },
+});
+
 const upload = multer({ storage: storage });
+const uploadDp = multer({ storage: storageImageDp });
 exports.uploadOrderImage = upload.single("image");
+exports.uploadOrderImageDp = uploadDp.single("image");
 
 exports.updateOrder = (req, res) => {
   const { id } = req.params;
@@ -68,6 +91,23 @@ exports.updateOrder = (req, res) => {
       res.status(500).json({ error: err.message });
     } else {
       res.json({ message: "Order updated successfully" });
+    }
+  });
+};
+
+exports.updateOrderDp = (req, res) => {
+  const { id } = req.params;
+  const { dp, sisa, status } = req.body;
+  const imageDp = req.file ? req.file.filename : null;
+  console.log("Received file DP:", req.file);
+  const query =
+    "UPDATE orders SET dp = ?, sisa = ?, status = ?, imageDp = ? WHERE id = ?";
+
+  db.query(query, [dp, sisa, status, imageDp, id], (err, result) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+    } else {
+      res.json({ message: "Dp Berhasil diterima!" });
     }
   });
 };

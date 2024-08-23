@@ -53,6 +53,11 @@ app.post("/orders", (req, res) => {
     nophone,
     alamat,
     ongkir,
+    orderanBuat,
+    pengambilan,
+    timeDeliver,
+    kurir,
+    pajak,
   } = req.body;
 
   if (!nama || nama.trim() === "") {
@@ -75,7 +80,7 @@ app.post("/orders", (req, res) => {
   console.log(nophone + ongkir);
 
   const sql =
-    "INSERT INTO orders (name, pesanan, normalprice, price, status, refund, progress, date, cashier, noted, nophone, alamat, ongkir) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    "INSERT INTO orders (name, pesanan, normalprice, price, status, refund, progress, date, cashier, noted, nophone, alamat, ongkir, orderanBuat, pengambilan, timeDeliver, kurir, pajak) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   db.query(
     sql,
     [
@@ -92,6 +97,11 @@ app.post("/orders", (req, res) => {
       nophone,
       alamat,
       ongkir,
+      orderanBuat,
+      pengambilan,
+      timeDeliver,
+      kurir,
+      pajak,
     ],
     (err, result) => {
       if (err) {

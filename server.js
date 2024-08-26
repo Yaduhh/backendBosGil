@@ -66,6 +66,16 @@ app.post("/orders", (req, res) => {
     return res.status(400).send("Nama pelanggan harus diisi");
   }
 
+  const orderanBuatDate = new Date(orderanBuat);
+  const formattedOrderanBuat = `${orderanBuatDate.getFullYear()}-${String(
+    orderanBuatDate.getMonth() + 1
+  ).padStart(2, "0")}-${String(orderanBuatDate.getDate()).padStart(
+    2,
+    "0"
+  )} ${String(orderanBuatDate.getHours()).padStart(2, "0")}:${String(
+    orderanBuatDate.getMinutes()
+  ).padStart(2, "0")}:${String(orderanBuatDate.getSeconds()).padStart(2, "0")}`;
+
   const now = new Date();
   const formattedDate = `${now.getFullYear()}-${String(
     now.getMonth() + 1
@@ -79,7 +89,9 @@ app.post("/orders", (req, res) => {
   const refund = 0;
   const progress = false;
 
-  console.log(nophone + ongkir);
+  console.log(
+    "ini yang diterima backend orderan buat : " + formattedOrderanBuat
+  );
 
   const sql =
     "INSERT INTO orders (name, pesanan, normalprice, price, status, refund, progress, date, cashier, noted, nophone, alamat, ongkir, orderanBuat, pengambilan, timeDeliver, kurir, pajak) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -99,7 +111,7 @@ app.post("/orders", (req, res) => {
       nophone,
       alamat,
       ongkir,
-      orderanBuat,
+      formattedOrderanBuat,
       pengambilan,
       timeDeliver,
       kurir,

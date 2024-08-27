@@ -97,19 +97,23 @@ exports.updateOrder = (req, res) => {
 
 exports.updateOrderDp = (req, res) => {
   const { id } = req.params;
-  const { dp, sisa, status } = req.body;
+  const { dp, sisa, status, nameDriver } = req.body;
   const imageDp = req.file ? req.file.filename : null;
   console.log("Received file DP:", req.file);
   const query =
-    "UPDATE orders SET dp = ?, sisa = ?, status = ?, imageDp = ? WHERE id = ?";
+    "UPDATE orders SET dp = ?, sisa = ?, status = ?, imageDp = ?, nameDriver = ? WHERE id = ?";
 
-  db.query(query, [dp, sisa, status, imageDp, id], (err, result) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-    } else {
-      res.json({ message: "Dp Berhasil diterima!" });
+  db.query(
+    query,
+    [dp, sisa, status, imageDp, nameDriver, id],
+    (err, result) => {
+      if (err) {
+        res.status(500).json({ error: err.message });
+      } else {
+        res.json({ message: "Dp Berhasil diterima!" });
+      }
     }
-  });
+  );
 };
 
 exports.updateStatus = (req, res) => {

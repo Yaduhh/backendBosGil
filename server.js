@@ -19,6 +19,7 @@ const loginRouter = require("./routes/login");
 const registerRouter = require("./routes/register");
 const { updateOrder } = require("./controllers/orderController");
 const { updateOrderDp } = require("./controllers/orderController");
+const { updateOrderDriver } = require("./controllers/orderController");
 const { updateStatus } = require("./controllers/orderController");
 const { deleteOrder } = require("./controllers/orderController");
 const { uploadOrderImage } = require("./controllers/orderController");
@@ -140,6 +141,12 @@ app.post(
   getOrderNameMiddleware,
   uploadOrderImageDp,
   updateOrderDp
+);
+app.post(
+  "/orders/:id/driver",
+  getOrderNameMiddleware,
+  uploadOrderImageDp,
+  updateOrderDriver
 );
 app.post("/orders/:id/progress", updateStatus);
 app.delete("/orders/:id", deleteOrder);

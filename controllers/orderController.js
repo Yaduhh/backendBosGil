@@ -80,32 +80,36 @@ exports.uploadOrderImageDp = uploadDp.single("image");
 
 exports.updateOrder = (req, res) => {
   const { id } = req.params;
-  const { pay, status, refund } = req.body;
+  const { pay, status, refund, banklunas } = req.body;
   const image = req.file ? req.file.filename : null;
   console.log("Received file:", req.file);
   const query =
-    "UPDATE orders SET pay = ?, status = ?, refund = ?, image = ? WHERE id = ?";
+    "UPDATE orders SET pay = ?, status = ?, refund = ?, image = ?, banklunas = ? WHERE id = ?";
 
-  db.query(query, [pay, status, refund, image, id], (err, result) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-    } else {
-      res.json({ message: "Order updated successfully" });
+  db.query(
+    query,
+    [pay, status, refund, image, banklunas, id],
+    (err, result) => {
+      if (err) {
+        res.status(500).json({ error: err.message });
+      } else {
+        res.json({ message: "Order updated successfully" });
+      }
     }
-  });
+  );
 };
 
 exports.updateOrderDp = (req, res) => {
   const { id } = req.params;
-  const { dp, sisa, status, nameDriver } = req.body;
+  const { dp, sisa, status, nameDriver, nomorDriver, bank } = req.body;
   const imageDp = req.file ? req.file.filename : null;
-  console.log("Received file DP:", req.file);
+  console.log("Data DP:", bank);
   const query =
-    "UPDATE orders SET dp = ?, sisa = ?, status = ?, imageDp = ?, nameDriver = ? WHERE id = ?";
+    "UPDATE orders SET dp = ?, sisa = ?, status = ?, imageDp = ?, nameDriver = ?, nomorDriver = ?, bank = ? WHERE id = ?";
 
   db.query(
     query,
-    [dp, sisa, status, imageDp, nameDriver, id],
+    [dp, sisa, status, imageDp, nameDriver, nomorDriver, bank, id],
     (err, result) => {
       if (err) {
         res.status(500).json({ error: err.message });
@@ -114,6 +118,24 @@ exports.updateOrderDp = (req, res) => {
       }
     }
   );
+};
+
+// CHANGE IDENTITY DRIVER
+exports.updateOrderDriver = (req, res) => {
+  const { id } = req.params;
+  const { nameDriver, nomorDriver } = req.body;
+
+  console.log(id, nameDriver, nomorDriver);
+  const query =
+    "UPDATE orders SET nameDriver = ?, nomorDriver = ? WHERE id = ?";
+
+  db.query(query, [nameDriver, nomorDriver, id], (err, result) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+    } else {
+      res.json({ message: "Dp Berhasil diterima!" });
+    }
+  });
 };
 
 exports.updateStatus = (req, res) => {

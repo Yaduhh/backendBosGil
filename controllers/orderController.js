@@ -154,8 +154,7 @@ exports.updateStatus = (req, res) => {
 
 exports.deleteOrder = (req, res) => {
   const { id } = req.params;
-  const { parsedPesanan } = req.body; // Ambil parsedPesanan dari body request
-
+  const { parsedPesanan } = req.body;
   // Dapatkan nama file gambar yang terkait dengan order
   const queryGetImage = "SELECT image FROM orders WHERE id = ?";
 
@@ -205,6 +204,80 @@ exports.deleteOrder = (req, res) => {
       res.json({ message: "Order deleted successfully" });
     });
   });
+};
+
+exports.updateOrderPesanan = (req, res) => {
+  const { id } = req.params;
+  const {
+    normalprice,
+    price,
+    nama,
+    noted,
+    alamat,
+    nophone,
+    ongkir,
+    orderanBuat,
+    pengambilan,
+    timeDeliver,
+    kurir,
+    pajak,
+    pesanan,
+  } = req.body;
+
+  console.log(pesanan);
+  console.log("ID Pesanan:", id); // Log ID pesanan yang diterima
+  console.log("Data yang diterima:", req.body); // Log data yang diterima
+
+  // Construct the SQL UPDATE query
+  const query = `
+    UPDATE orders SET 
+      normalprice = ?, 
+      price = ?, 
+      name = ?, 
+      noted = ?, 
+      alamat = ?, 
+      nophone = ?, 
+      ongkir = ?, 
+      orderanBuat = ?, 
+      pengambilan = ?, 
+      timeDeliver = ?, 
+      kurir = ?, 
+      pajak = ?,
+      pesanan = ?
+    WHERE id = ?`;
+
+  // Execute the query
+  db.query(
+    query,
+    [
+      normalprice,
+      price,
+      nama,
+      noted,
+      alamat,
+      nophone,
+      ongkir,
+      orderanBuat,
+      pengambilan,
+      timeDeliver,
+      kurir,
+      pajak,
+      JSON.stringify(pesanan),
+      id, // the order ID to update
+    ],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+
+      // Check if any rows were affected
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      res.json({ message: "Order updated successfully" });
+    }
+  );
 };
 
 exports.getOrderNameMiddleware = getOrderNameMiddleware;

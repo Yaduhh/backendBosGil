@@ -17,6 +17,7 @@ const editProdukRouter = require("./routes/editProduk");
 const editUserRouter = require("./routes/updateUser");
 const loginRouter = require("./routes/login");
 const registerRouter = require("./routes/register");
+const { updateOrderPesanan } = require("./controllers/orderController");
 const { updateOrder } = require("./controllers/orderController");
 const { updateOrderDp } = require("./controllers/orderController");
 const { updateOrderDriver } = require("./controllers/orderController");
@@ -90,10 +91,6 @@ app.post("/orders", (req, res) => {
   const refund = 0;
   const progress = false;
 
-  console.log(
-    "ini yang diterima backend orderan buat : " + formattedOrderanBuat
-  );
-
   const sql =
     "INSERT INTO orders (name, pesanan, normalprice, price, status, refund, progress, date, cashier, noted, nophone, alamat, ongkir, orderanBuat, pengambilan, timeDeliver, kurir, pajak) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   db.query(
@@ -136,6 +133,7 @@ app.post(
   uploadOrderImage,
   updateOrder
 );
+
 app.post(
   "/orders/:id/dp",
   getOrderNameMiddleware,
@@ -150,6 +148,7 @@ app.post(
 );
 app.post("/orders/:id/progress", updateStatus);
 app.delete("/orders/:id", deleteOrder);
+app.put("/orders/update/:id", updateOrderPesanan);
 
 // app.use("/daftarAkun", daftarAkunRouter);
 

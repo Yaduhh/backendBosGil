@@ -224,60 +224,76 @@ exports.updateOrderPesanan = (req, res) => {
     pesanan,
   } = req.body;
 
-  console.log(pesanan);
-  console.log("ID Pesanan:", id); // Log ID pesanan yang diterima
-  console.log("Data yang diterima:", req.body); // Log data yang diterima
+  // Pertama, ambil nilai dp dari database
+  const dpQuery = `SELECT dp FROM orders WHERE id = ?`;
 
-  // Construct the SQL UPDATE query
-  const query = `
-    UPDATE orders SET 
-      normalprice = ?, 
-      price = ?, 
-      name = ?, 
-      noted = ?, 
-      alamat = ?, 
-      nophone = ?, 
-      ongkir = ?, 
-      orderanBuat = ?, 
-      pengambilan = ?, 
-      timeDeliver = ?, 
-      kurir = ?, 
-      pajak = ?,
-      pesanan = ?
-    WHERE id = ?`;
-
-  // Execute the query
-  db.query(
-    query,
-    [
-      normalprice,
-      price,
-      nama,
-      noted,
-      alamat,
-      nophone,
-      ongkir,
-      orderanBuat,
-      pengambilan,
-      timeDeliver,
-      kurir,
-      pajak,
-      JSON.stringify(pesanan),
-      id, // the order ID to update
-    ],
-    (err, result) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      // Check if any rows were affected
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ error: "Order not found" });
-      }
-
-      res.json({ message: "Order updated successfully" });
+  db.query(dpQuery, [id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
     }
-  );
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    // Ambil nilai dp dari hasil query
+    const dp = results[0].dp;
+
+    // Hitung sisa (balance)
+    const sisa = dp ? price - dp : price;
+
+    // Lanjutkan dengan update order setelah mendapatkan dp
+    const updateQuery = `
+      UPDATE orders SET 
+        normalprice = ?, 
+        price = ?, 
+        sisa = ?,
+        name = ?, 
+        noted = ?, 
+        alamat = ?, 
+        nophone = ?, 
+        ongkir = ?, 
+        orderanBuat = ?, 
+        pengambilan = ?, 
+        timeDeliver = ?, 
+        kurir = ?, 
+        pajak = ?,
+        pesanan = ?
+      WHERE id = ?`;
+
+    db.query(
+      updateQuery,
+      [
+        normalprice,
+        price,
+        sisa,
+        nama,
+        noted,
+        alamat,
+        nophone,
+        ongkir,
+        orderanBuat,
+        pengambilan,
+        timeDeliver,
+        kurir,
+        pajak,
+        JSON.stringify(pesanan),
+        id,
+      ],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+
+        // Check if any rows were affected
+        if (result.affectedRows === 0) {
+          return res.status(404).json({ error: "Order not found" });
+        }
+
+        res.json({ message: "Order updated successfully" });
+      }
+    );
+  });
 };
 
 exports.getOrderNameMiddleware = getOrderNameMiddleware;

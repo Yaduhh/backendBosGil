@@ -224,10 +224,10 @@ exports.updateOrderPesanan = (req, res) => {
     pesanan,
   } = req.body;
 
-  // Pertama, ambil nilai dp dari database
-  const dpQuery = `SELECT dp FROM orders WHERE id = ?`;
+  // Pertama, ambil nilai dp dan status dari database
+  const selectQuery = `SELECT dp, status FROM orders WHERE id = ?`;
 
-  db.query(dpQuery, [id], (err, results) => {
+  db.query(selectQuery, [id], (err, results) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
@@ -236,13 +236,19 @@ exports.updateOrderPesanan = (req, res) => {
       return res.status(404).json({ error: "Order not found" });
     }
 
-    // Ambil nilai dp dari hasil query
+    // Ambil nilai dp dan status dari hasil query
     const dp = results[0].dp;
+    let status = results[0].status;
+
+    // Ubah status jika status saat ini adalah 2, jadikan 1
+    if (status === 2) {
+      status = 1;
+    }
 
     // Hitung sisa (balance)
     const sisa = dp ? price - dp : price;
 
-    // Lanjutkan dengan update order setelah mendapatkan dp
+    // Lanjutkan dengan update order setelah mendapatkan dp dan status
     const updateQuery = `
       UPDATE orders SET 
         normalprice = ?, 
@@ -258,7 +264,8 @@ exports.updateOrderPesanan = (req, res) => {
         timeDeliver = ?, 
         kurir = ?, 
         pajak = ?,
-        pesanan = ?
+        pesanan = ?,
+        status = ?
       WHERE id = ?`;
 
     db.query(
@@ -278,6 +285,7 @@ exports.updateOrderPesanan = (req, res) => {
         kurir,
         pajak,
         JSON.stringify(pesanan),
+        status, // masukkan status yang sudah diperbarui
         id,
       ],
       (err, result) => {
@@ -290,7 +298,7 @@ exports.updateOrderPesanan = (req, res) => {
           return res.status(404).json({ error: "Order not found" });
         }
 
-        res.json({ message: "Order updated successfully" });
+        res.json({ message: "Order updated successfully", status });
       }
     );
   });

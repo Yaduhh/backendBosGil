@@ -224,6 +224,10 @@ exports.updateOrderPesanan = (req, res) => {
     pesanan,
   } = req.body;
 
+  // Konversi orderanBuat untuk mengatasi perbedaan waktu
+  const correctedOrderanBuat = new Date(orderanBuat);
+  correctedOrderanBuat.setHours(correctedOrderanBuat.getHours());
+
   // Pertama, ambil nilai dp dan status dari database
   const selectQuery = `SELECT dp, status FROM orders WHERE id = ?`;
 
@@ -279,7 +283,7 @@ exports.updateOrderPesanan = (req, res) => {
         alamat,
         nophone,
         ongkir,
-        orderanBuat,
+        correctedOrderanBuat,
         pengambilan,
         timeDeliver,
         kurir,

@@ -9,6 +9,7 @@ const multer = require("multer");
 const app = express();
 const port = 3000;
 const ordersRouter = require("./routes/orders");
+const reservasiRouter = require("./routes/reservasi");
 const menuRouter = require("./routes/menu");
 const daftarAkunRouter = require("./routes/daftarAkun");
 const deleteMenuRouter = require("./routes/deleteMenu");
@@ -18,6 +19,7 @@ const editUserRouter = require("./routes/updateUser");
 const loginRouter = require("./routes/login");
 const registerRouter = require("./routes/register");
 const { updateOrderPesanan } = require("./controllers/orderController");
+const { updateOrderPesananReservasi } = require("./controllers/orderController");
 const { updateOrder } = require("./controllers/orderController");
 const { updateOrderDp } = require("./controllers/orderController");
 const { updateOrderDriver } = require("./controllers/orderController");
@@ -125,8 +127,89 @@ app.post("/orders", (req, res) => {
   );
 });
 
+// Routes
+app.post("/orders-reservasi", (req, res) => {
+  const {
+    nama,
+    pesanan,
+    price,
+    normalprice,
+    cashier,
+    noted,
+    nophone,
+    orderanBuat,
+    pajak,
+    jumlah_orang,
+    from_jam,
+    until_jam,
+    status_reservasi,
+    vip,
+  } = req.body;
+
+  if (!nama || nama.trim() === "") {
+    return res.status(400).send("Nama pelanggan harus diisi");
+  }
+
+  const orderanBuatDate = new Date(orderanBuat);
+  const formattedOrderanBuat = `${orderanBuatDate.getFullYear()}-${String(
+    orderanBuatDate.getMonth() + 1
+  ).padStart(2, "0")}-${String(orderanBuatDate.getDate()).padStart(
+    2,
+    "0"
+  )} ${String(orderanBuatDate.getHours()).padStart(2, "0")}:${String(
+    orderanBuatDate.getMinutes()
+  ).padStart(2, "0")}:${String(orderanBuatDate.getSeconds()).padStart(2, "0")}`;
+
+  const now = new Date();
+  const formattedDate = `${now.getFullYear()}-${String(
+    now.getMonth() + 1
+  ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(
+    now.getHours()
+  ).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(
+    now.getSeconds()
+  ).padStart(2, "0")}`;
+
+  const status = false;
+  const refund = 0;
+  const progress = false;
+
+  const sql =
+    "INSERT INTO orders (name, pesanan, normalprice, price, status, refund, progress, date, cashier, noted, nophone, orderanBuat, pajak, from_jam, until_jam, jumlah_orang, vip, status_reservasi) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  db.query(
+    sql,
+    [
+      nama,
+      JSON.stringify(pesanan),
+      normalprice,
+      price,
+      status,
+      refund,
+      progress,
+      formattedDate,
+      cashier,
+      noted,
+      nophone,
+      formattedOrderanBuat,
+      pajak,
+      from_jam,
+      until_jam,
+      jumlah_orang,
+      vip,
+      status_reservasi
+    ],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send("Error saving to database");
+      }
+      res.status(200).send("Order saved to database");
+    }
+  );
+});
+
 // Gunakan router orders untuk semua permintaan ke /orders
 app.use("/getorders", ordersRouter);
+app.use("/getorders-reservasi", reservasiRouter);
 app.post(
   "/orders/:id/refund",
   getOrderNameMiddleware,
@@ -149,6 +232,7 @@ app.post(
 app.post("/orders/:id/progress", updateStatus);
 app.delete("/orders/:id", deleteOrder);
 app.put("/orders/update/:id", updateOrderPesanan);
+app.put("/orders/update/reservasi/:id", updateOrderPesananReservasi);
 
 // app.use("/daftarAkun", daftarAkunRouter);
 

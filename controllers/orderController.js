@@ -82,9 +82,8 @@ exports.updateOrder = (req, res) => {
   const { id } = req.params;
   const { pay, status, refund, banklunas } = req.body;
   const image = req.file ? req.file.filename : null;
-  console.log("Received file:", req.file);
   const query =
-    "UPDATE orders SET pay = ?, status = ?, refund = ?, image = ?, banklunas = ? WHERE id = ?";
+    "UPDATE orders SET pay = ?, status = ?, refund = ?, image = ?, banklunas = ?, progress = 1 WHERE id = ?";
 
   db.query(
     query,
@@ -103,9 +102,8 @@ exports.updateOrderDp = (req, res) => {
   const { id } = req.params;
   const { dp, sisa, status, nameDriver, nomorDriver, bank } = req.body;
   const imageDp = req.file ? req.file.filename : null;
-  console.log("Data DP:", bank);
   const query =
-    "UPDATE orders SET dp = ?, sisa = ?, status = ?, imageDp = ?, nameDriver = ?, nomorDriver = ?, bank = ? WHERE id = ?";
+    "UPDATE orders SET dp = ?, sisa = ?, status = ?, imageDp = ?, nameDriver = ?, nomorDriver = ?, bank = ?, progress = 1 WHERE id = ?";
 
   db.query(
     query,
@@ -290,6 +288,110 @@ exports.updateOrderPesanan = (req, res) => {
         pajak,
         JSON.stringify(pesanan),
         status, // masukkan status yang sudah diperbarui
+        id,
+      ],
+      (err, result) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+
+        // Check if any rows were affected
+        if (result.affectedRows === 0) {
+          return res.status(404).json({ error: "Order not found" });
+        }
+
+        res.json({ message: "Order updated successfully", status });
+      }
+    );
+  });
+};
+
+exports.updateOrderPesananReservasi = (req, res) => {
+  const { id } = req.params;
+  const {
+    normalprice,
+    price,
+    nama,
+    noted,
+    nophone,
+    orderanBuat,
+    pajak,
+    pesanan,
+    vip,
+    from_jam,
+    until_jam,
+    jumlah_orang,
+    status_reservasi
+  } = req.body;
+
+  // Konversi orderanBuat untuk mengatasi perbedaan waktu
+  const correctedOrderanBuat = new Date(orderanBuat);
+  correctedOrderanBuat.setHours(correctedOrderanBuat.getHours());
+
+  // Pertama, ambil nilai dp dan status dari database
+  const selectQuery = `SELECT dp, status FROM orders WHERE id = ?`;
+
+  db.query(selectQuery, [id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    // Ambil nilai dp dan status dari hasil query
+    const dp = results[0].dp;
+    let status = results[0].status;
+
+    // Ubah status jika status saat ini adalah 2, jadikan 1
+    if (status === 2) {
+      status = 1;
+    }
+
+    // Hitung sisa (balance)
+    const sisa = dp ? price - dp : price;
+
+    // Lanjutkan dengan update order setelah mendapatkan dp dan status
+    const updateQuery = `
+      UPDATE orders SET 
+        normalprice = ?, 
+        price = ?, 
+        sisa = ?,
+        name = ?, 
+        noted = ?,
+        nophone = ?, 
+        orderanBuat = ?, 
+        pajak = ?,
+        pesanan = ?,
+        vip = ?,
+        jumlah_orang = ?,
+        from_jam = ?,
+        until_jam = ?,
+        status_reservasi = 0,
+        dp = 0,
+        pay = 0,
+        sisa = 0,
+        status = 0,
+        progress = 0
+      WHERE id = ?`;
+
+    db.query(
+      updateQuery,
+      [
+        normalprice,
+        price,
+        sisa,
+        nama,
+        noted,
+        nophone,
+        correctedOrderanBuat,
+        pajak,
+        JSON.stringify(pesanan),
+        vip, 
+        jumlah_orang,
+        from_jam,
+        until_jam,
         id,
       ],
       (err, result) => {

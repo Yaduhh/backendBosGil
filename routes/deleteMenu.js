@@ -6,6 +6,7 @@ const path = require("path");
 
 router.delete("/:id", (req, res) => {
   const id = req.params.id;
+  console.log("Received ID:", id);
 
   const getImageQuery = "SELECT picture FROM menu WHERE id = ?";
   db.query(getImageQuery, [id], (err, result) => {

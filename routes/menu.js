@@ -5,7 +5,9 @@ const db = require('../db');
 
 // GET all orders
 router.get('/', (req, res) => {
-  const query = 'SELECT * FROM menu';
+  // Memodifikasi query untuk mengurutkan berdasarkan ID secara menurun
+  const query = 'SELECT * FROM menu ORDER BY id DESC';
+  
   db.query(query, (error, results) => {
     if (error) {
       console.error('Error fetching orders:', error);

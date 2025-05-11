@@ -19,7 +19,8 @@ const upload = multer({ storage: storage });
 router.post("/", upload.single("picture"), (req, res) => {
   const { name, typemenu, type, status, detail, price, stock } = req.body;
   const picture = req.file ? req.file.filename : null;
-
+  console.log('Received data:', req.body);
+  console.log('Received File:', req.file);
   if (!name || !typemenu || !type || !status || !detail || !price || !stock) {
     return res.status(400).send("Semua field harus diisi");
   }
@@ -47,7 +48,9 @@ router.post("/", upload.single("picture"), (req, res) => {
           console.log(err);
           return res.status(500).send("Error saving to database");
         }
-        res.status(200).send("Product saved to database");
+        res
+          .status(200)
+          .json({ success: true, message: "Product saved to database" });
       }
     );
   });

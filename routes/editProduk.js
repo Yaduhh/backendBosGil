@@ -20,7 +20,6 @@ router.put("/:id", upload.single("picture"), (req, res) => {
   const id = req.params.id;
   const { name, detail, price, status, stock } = req.body;
   const picture = req.file ? req.file.filename : null;
-
   // Find existing item to get the old picture
   const findQuery = "SELECT picture FROM menu WHERE id = ?";
   db.query(findQuery, [id], (findErr, findResult) => {
@@ -66,9 +65,8 @@ router.put("/:id", upload.single("picture"), (req, res) => {
         });
       }
 
-      res.status(200).send("Menu item updated successfully");
+      res.status(200).json({ success: true, message: "Menu item updated successfully" });
     });
   });
 });
-
 module.exports = router;

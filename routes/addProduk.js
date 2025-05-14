@@ -19,8 +19,6 @@ const upload = multer({ storage: storage });
 router.post("/", upload.single("picture"), (req, res) => {
   const { name, typemenu, type, status, detail, price, stock } = req.body;
   const picture = req.file ? req.file.filename : null;
-  console.log('Received data:', req.body);
-  console.log('Received File:', req.file);
   if (!name || !typemenu || !type || !status || !detail || !price || !stock) {
     return res.status(400).send("Semua field harus diisi");
   }

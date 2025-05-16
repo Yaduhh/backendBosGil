@@ -1,10 +1,9 @@
 // server.js
 const express = require("express");
-const axios = require("axios");
 const cors = require("cors");
 const db = require("./db");
 const path = require("path");
-const multer = require("multer");
+const fs = require("fs");
 
 const app = express();
 const port = 3000;
@@ -33,6 +32,7 @@ const checkStockRouter = require("./routes/checkStock");
 const reduceStockRouter = require("./routes/reduceStock");
 
 const akunController = require("./controllers/akunController");
+const generateReceiptRoute = require("./routes/generateReceiptRoute");
 
 app.use(express.json());
 
@@ -49,6 +49,10 @@ app.use((req, res, next) => {
 });
 
 // Routes
+
+// API NOTA
+app.use("/", generateReceiptRoute);
+
 app.post("/orders", (req, res) => {
   const {
     nama,
@@ -257,6 +261,7 @@ app.put("/editAkun/:id", akunController.editAccount);
 
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 app.listen(port, "0.0.0.0", () => {
   console.log(`Server running at http://localhost:${port}`);
 });

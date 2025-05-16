@@ -28,7 +28,7 @@ router.get("/rekap-all-laporan", (req, res) => {
     SELECT orders.*, users.name AS cashier_name
     FROM orders
     LEFT JOIN users ON orders.cashier = users.id
-    WHERE orders.progress != 2
+    WHERE orders.progress != 0
   `;
 
   db.query(query, (error, results) => {

@@ -3,18 +3,12 @@ const { formatTanggal, formatTime, formatDateStruk, formatHarga } = require('../
 const adjustTimeDeliver = (timeDeliver) => {
   const [hours, minutes] = timeDeliver.split(":").map(Number);
   const date = new Date();
-  date.setHours(hours);
-  date.setMinutes(minutes - 0);
-
-  // Handle cases where minutes become negative and adjust accordingly
-  const adjustedHours = date.getHours().toString().padStart(2, "0");
-  const adjustedMinutes = date.getMinutes().toString().padStart(2, "0");
-
-  return `${adjustedHours}:${adjustedMinutes}`; // Returns 'HH:mm'
+  date.setHours(hours, minutes - 0);
+  return date.toTimeString().slice(0, 5);
 };
 
 const notaReservasiCondet = async (order) => {
-  const outlet = "NASI MANDHI BOSGIL CONDET";
+const outlet = "NASI MANDHI BOSGIL CONDET";
   const storeAddress =
     "Jl. RAYA CONDET NO.5 RT.5/RW 6 CILILITAN KRAMAT JATI JAKARTA";
   const phoneNumber = "08119058817";
@@ -54,18 +48,19 @@ const notaReservasiCondet = async (order) => {
             }
             .title {
               font-size: 24px;
+              font-weight: 500,
               margin-bottom: 5px;
               margin-top: -2px;
               color:#000;
             }
             .title-reservasi {
-              font-size: 24px;
-              font-weight: 700;
+              font-size: 40px;
+              font-weight: bold,
               color:#000;
             }
             .sub-title {
               font-size: 20px;
-              font-weight: 400;
+              font-weight: 400,
               margin-bottom: 5px;
               margin-top: -2px;
               color:#000;
@@ -108,7 +103,7 @@ const notaReservasiCondet = async (order) => {
             }
             .info-row-format {
               display: flex;
-              width: 38.5%;
+              width: 150;
               justify-content: space-between;
               margin-bottom: 2px;
               padding-right: 1px;
@@ -133,12 +128,12 @@ const notaReservasiCondet = async (order) => {
         </head>
         <body>
           <div class="header">
-            <div class="title-reservasi" style="margin-top:20px; margin-bottom:10px font-weight:bold;">NOTA RESERVASI</div>
-            <img src="https://bosgil.com/logo.jpeg" alt="Logo" style="width: 260px; height: auto; margin-top:5px"/>
+          <div class="title-reservasi" style="margin-top:20px; margin-bottom:10px font-weight:bold;">NOTA RESERVASI</div>
+            <img src="https://bosgil.com/logo.jpeg" alt="Logo" style="width: 260px; height: auto; margin-top:15px"/>
             <div class="title" style="margin-top:10px; font-weight:500;">${outlet}</div>
             <div class="sub-title" style="margin-top:10px; font-weight:500;">${storeAddress}</div>
               <div class="info" style="margin-top:10px;">Admin I ${"     "}: ${phoneNumber}</div>
-              <div class="info">Admin II: ${phoneNumber1}</div>
+                <div class="info">Admin 2: ${phoneNumber1}</div>
             </div>
             <div class="underline" style="margin-top:10px;"></div>
             <div class="receipt-body">
@@ -156,29 +151,38 @@ const notaReservasiCondet = async (order) => {
                 order.id
               }${formatDateStruk(order.date)}</div>
 
-              <div class="info" style="margin-top:5px;">Nama Cust : ${
-                order.name
-              }</div>
-
-              <div class="info" style="margin-top:5px;">No. Telp : 0${
-                String(order.nophone).startsWith("62")
-                  ? String(order.nophone).slice(2)
-                  : order.nophone
-              }</div>
+              <div class="info" style="margin-top:5px;">
+              Nama Cust : <b>${order.name}</b>
+              </div>
+              
+              <div class="info" style="margin-top:5px;">
+              No. Telp : <b>0${
+              String(order.nophone).startsWith("62")
+              ? String(order.nophone).slice(2)
+              : order.nophone
+                  
+              }</b>
+              </div>
 
               <div class="batas"></div>
               <div class="underline"></div>
               <div class="batas">
               
-              <div class="info" style="margin-top:5px;">VIP ROOM ${
-                order.vip
-              }${" Untuk "} ${order.jumlah_orang} Orang</div>
-              <div class="info" style="margin-top:5px;">Reservasi Buat : ${formatTanggal(
-                order.orderanBuat
-              )}</div>
-              <div class="info" style="margin-top:5px;">Waktu Reservasi : ${adjustTimeDeliver(
-                order.from_jam
-              )} - ${adjustTimeDeliver(order.until_jam)}</div>
+              <div class="info" style="margin-top:5px;">
+              VIP ROOM : <b>${order.vip}</b>
+              </div>
+              
+              <div class="info" style="margin-top:5px;">
+              Jumlah Tamu : <b>${order.jumlah_orang} Orang</b>
+              </div>
+              
+              <div class="info" style="margin-top:5px;">
+              Reservasi Buat : <b>${formatTanggal(order.orderanBuat)}</b>
+              </div>
+              
+              <div class="info" style="margin-top:5px;">
+              Waktu Reservasi : <b>${adjustTimeDeliver(order.from_jam)} -   ${adjustTimeDeliver(order.until_jam)}</b>
+              </div>
 
               <div class="batas"></div>
               <div class="underline"></div>
@@ -190,7 +194,7 @@ const notaReservasiCondet = async (order) => {
               <div class="underline"></div>
               <div class="batas">
             </div>
-              <div class="info">
+               <div class="info">
                 ${parsedPesanan
                   .map(
                     (item) => `

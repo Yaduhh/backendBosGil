@@ -145,22 +145,22 @@ const notaCondet = async (order) => {
                 order.id
               }${formatDateStruk(order.date)}</div>
 
-              <div class="info" style="margin-top:5px;">Orderan Buat : ${formatTanggal(
+              <div class="info" style="margin-top:5px;">Orderan Buat : <b>${formatTanggal(
                 order.orderanBuat
-              )}</div>
+              )}</b></div>
               <div class="info" style="margin-top:5px;">${
                 order.pengambilan === "diambil" ? `Diambil Jam` : `Dikirim Jam`
-              } ${adjustTimeDeliver(order.timeDeliver)}</div>
+              } <b>${adjustTimeDeliver(order.timeDeliver)}</b></div>
 
-              <div class="info" style="margin-top:5px;">Nama Cust : ${
+              <div class="info" style="margin-top:5px;">Nama Cust : <b>${
                 order.name
-              }</div>
+              }</b></div>
 
-              <div class="info" style="margin-top:5px;">No. Telp : 0${
+              <div class="info" style="margin-top:5px;">No. Telp : <b>0${
                 String(order.nophone).startsWith("62")
                   ? String(order.nophone).slice(2)
                   : order.nophone
-              }</div>
+              }</b></div>
               <div class="info" style="margin-top:5px;"">Alamat : ${
                 order.alamat
               }</div>
@@ -170,9 +170,9 @@ const notaCondet = async (order) => {
               <div class="batas">
               
               <div class="info-row" style="margin-top:5px;">
-                <div class="info"w style="text-transform:capitalize;">${
+                <div class="info"w style="text-transform:capitalize;"><b>${
                   order.pengambilan
-                } ${order.kurir ? `: ${order.kurir}` : ""}</div>                
+                } ${order.kurir ? `: ${order.kurir}` : ""}</b></div>                
               </div>
 
               <div class="batas"></div>

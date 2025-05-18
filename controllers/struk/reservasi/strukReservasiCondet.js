@@ -146,31 +146,38 @@ const strukReservasiCondet = async (order) => {
                 order.id
               }${formatDateStruk(order.date)}</div>
 
-              <div class="info" style="margin-top:5px;">Nama Cust : ${
-                order.name
-              }</div>
+              <div class="info" style="margin-top:5px;">
+              Nama Cust : <b>${order.name}</b>
+              </div>
+              
+              <div class="info" style="margin-top:5px;">
+              No. Telp : <b>0${
+              String(order.nophone).startsWith("62")
+              ? String(order.nophone).slice(2)
+              : order.nophone
+                  
+              }</b>
+              </div>
 
-             <div class="info" style="margin-top:5px;">No. Telp : 0${
-               String(order.nophone).startsWith("62")
-                 ? String(order.nophone).slice(2)
-                 : order.nophone
-             }</div>
-             
               <div class="batas"></div>
               <div class="underline"></div>
               <div class="batas">
               
-              <div class="info" style="margin-top:5px;">VIP : ${
-                order.vip
-              }${" - "} ${order.jumlah_orang} Orang</div>
-
-              <div class="info" style="margin-top:5px;">Reservasi Buat : ${formatTanggal(
-                order.orderanBuat
-              )}</div>
-
-              <div class="info" style="margin-top:5px;">Waktu Reservasi : ${adjustTimeDeliver(
-                order.from_jam
-              )} - ${adjustTimeDeliver(order.until_jam)}</div>
+              <div class="info" style="margin-top:5px;">
+              VIP ROOM : <b>${order.vip}</b>
+              </div>
+              
+              <div class="info" style="margin-top:5px;">
+              Jumlah Tamu : <b>${order.jumlah_orang} Orang</b>
+              </div>
+              
+              <div class="info" style="margin-top:5px;">
+              Reservasi Buat : <b>${formatTanggal(order.orderanBuat)}</b>
+              </div>
+              
+              <div class="info" style="margin-top:5px;">
+              Waktu Reservasi : <b>${adjustTimeDeliver(order.from_jam)} -   ${adjustTimeDeliver(order.until_jam)}</b>
+              </div>
 
               <div class="batas"></div>
               <div class="underline"></div>

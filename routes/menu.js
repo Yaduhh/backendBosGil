@@ -1,17 +1,16 @@
-// routes/orders.js
+// routes/menu.js
 const express = require('express');
 const router = express.Router();
-const db = require('../db');
 
-// GET all orders
+// GET all menu items
 router.get('/', (req, res) => {
   // Memodifikasi query untuk mengurutkan berdasarkan ID secara menurun
   const query = 'SELECT * FROM menu ORDER BY id DESC';
   
-  db.query(query, (error, results) => {
+  req.db.query(query, (error, results) => {
     if (error) {
-      console.error('Error fetching orders:', error);
-      res.status(500).json({ error: 'Failed to fetch orders' });
+      console.error('Error fetching menu:', error);
+      res.status(500).json({ error: 'Failed to fetch menu items' });
       return;
     }
     res.json(results);

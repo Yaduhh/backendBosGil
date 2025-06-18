@@ -1,72 +1,157 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../db");
+const { getPool } = require("../db");
 const path = require("path");
-const fs = require("fs");
 const multer = require("multer");
+const fs = require("fs");
 
+// Get branch from request header
+const getBranchFromHeader = (req) => {
+  const branch = req.headers["x-branch-id"] || "condet";
+  return branch.toLowerCase();
+};
+
+// Helper function to safely delete file
+const safeDeleteFile = (filePath) => {
+  try {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      console.log("Successfully deleted file:", filePath);
+    }
+  } catch (err) {
+    console.log("Error in safeDeleteFile:", err);
+  }
+};
+
+// Create storage configuration with dynamic destination
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "assets/images");
+    const branch = getBranchFromHeader(req);
+    const branchPath = path.join(__dirname, "..", "assets", branch);
+    
+    // Create branch directory if it doesn't exist
+    if (!fs.existsSync(branchPath)) {
+      fs.mkdirSync(branchPath, { recursive: true });
+    }
+    
+    cb(null, branchPath);
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname));
+    // Generate unique filename with original extension
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    cb(null, uniqueSuffix + ext);
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ 
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    // Accept only image files
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  },
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  }
+});
 
+// Edit product
 router.put("/:id", upload.single("picture"), (req, res) => {
-  const id = req.params.id;
-  const { name, detail, price, status, stock } = req.body;
+  const { id } = req.params;
+  const { name, typemenu, type, status, detail, price, stock } = req.body;
   const picture = req.file ? req.file.filename : null;
-  // Find existing item to get the old picture
-  const findQuery = "SELECT picture FROM menu WHERE id = ?";
-  db.query(findQuery, [id], (findErr, findResult) => {
-    if (findErr) {
-      console.log(findErr);
-      return res.status(500).send("Error finding menu item");
+  const branch = getBranchFromHeader(req);
+
+  if (!name || !typemenu || !type || !status || !detail || !price || !stock) {
+    return res.status(400).send("Semua field harus diisi");
+  }
+
+  const pool = getPool(branch);
+
+  // First get the current product to check if name is changed and to get old picture
+  pool.query("SELECT * FROM menu WHERE id = ?", [id], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).send("Error checking product");
     }
 
-    if (findResult.length === 0) {
-      return res.status(404).send("Menu item not found");
+    if (result.length === 0) {
+      return res.status(404).send("Product not found");
     }
 
-    const oldPicture = findResult[0].picture;
+    const currentProduct = result[0];
 
-    // Update query
-    const updateQuery = picture
-      ? "UPDATE menu SET name = ?, detail = ?, price = ?, status = ?, stock = ?,  picture = ? WHERE id = ?"
-      : "UPDATE menu SET name = ?, detail = ?, price = ?, status = ?, stock = ? WHERE id = ?";
+    // If name is changed, check if new name already exists
+    if (name !== currentProduct.name) {
+      pool.query("SELECT * FROM menu WHERE name = ? AND id != ?", [name, id], (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).send("Error checking name");
+        }
 
-    const queryParams = picture
-      ? [name, detail, price, status, stock, picture, id]
-      : [name, detail, price, status, stock, id];
+        if (result.length > 0) {
+          return res.status(400).send("Nama menu tersebut sudah ada!");
+        }
 
-    db.query(updateQuery, queryParams, (updateErr, result) => {
-      if (updateErr) {
-        console.log(updateErr);
-        return res.status(500).send("Error updating menu item");
+        updateProduct();
+      });
+    } else {
+      updateProduct();
+    }
+
+    function updateProduct() {
+      let updateSql = "UPDATE menu SET name = ?, typemenu = ?, type = ?, status = ?, detail = ?, price = ?, stock = ?";
+      let params = [name, typemenu, type, status, detail, price, stock];
+
+      // If new picture is uploaded, add it to update
+      if (picture) {
+        updateSql += ", picture = ?";
+        params.push(picture);
+
+        // Delete old picture
+        if (currentProduct.picture) {
+          const oldPicturePath = path.join(__dirname, "..", "assets", branch, currentProduct.picture);
+          safeDeleteFile(oldPicturePath);
+        }
       }
 
-      // Delete old picture if a new one was uploaded
-      if (picture && oldPicture) {
-        const oldPicturePath = path.join(
-          __dirname,
-          "..",
-          "assets",
-          "images",
-          oldPicture
-        );
-        fs.unlink(oldPicturePath, (unlinkErr) => {
-          if (unlinkErr) {
-            console.log("Failed to delete old picture:", unlinkErr);
+      updateSql += " WHERE id = ?";
+      params.push(id);
+
+      pool.query(updateSql, params, (err, result) => {
+        if (err) {
+          console.log(err);
+          // If there's an error and new picture was uploaded, delete it
+          if (picture) {
+            const newPicturePath = path.join(__dirname, "..", "assets", branch, picture);
+            safeDeleteFile(newPicturePath);
+          }
+          return res.status(500).send("Error updating product");
+        }
+
+        res.status(200).json({
+          success: true,
+          message: "Product updated successfully",
+          data: {
+            id,
+            name,
+            typemenu,
+            type,
+            status,
+            detail,
+            picture: picture || currentProduct.picture,
+            price,
+            stock,
+            branch
           }
         });
-      }
-
-      res.status(200).json({ success: true, message: "Menu item updated successfully" });
-    });
+      });
+    }
   });
 });
+
 module.exports = router;

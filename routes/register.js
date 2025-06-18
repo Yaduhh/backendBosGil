@@ -1,7 +1,6 @@
 const express = require("express");
 const crypto = require("crypto");
 const router = express.Router();
-const db = require("../db");
 
 router.post("/", (req, res) => {
   const { name, username, password, role, gender, birthday, status } = req.body;
@@ -13,7 +12,7 @@ router.post("/", (req, res) => {
       .digest("hex");
 
     const checkUserQuery = "SELECT * FROM users WHERE username = ?";
-    db.query(checkUserQuery, [username], (err, result) => {
+    req.db.query(checkUserQuery, [username], (err, result) => {
       if (err) {
         console.error(err);
         return res.status(500).send("Internal server error");
@@ -26,8 +25,8 @@ router.post("/", (req, res) => {
       }
       const currentDate = new Date();
       const sql =
-        "INSERT INTO users (name, username, password, role, gender, birthday, createdAt, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-      db.query(
+        "INSERT INTO users (name, username, password, role, gender, birthday, createdAt, status, branch) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      req.db.query(
         sql,
         [
           name,
@@ -38,6 +37,7 @@ router.post("/", (req, res) => {
           birthday,
           currentDate,
           status,
+          req.branch
         ],
         (err, result) => {
           if (err) {
@@ -45,7 +45,11 @@ router.post("/", (req, res) => {
             return res.status(500).send("Internal server error");
           }
 
-          res.json({ success: true, message: "Registrasi berhasil" });
+          res.json({ 
+            success: true, 
+            message: "Registrasi berhasil",
+            branch: req.branch
+          });
         }
       );
     });

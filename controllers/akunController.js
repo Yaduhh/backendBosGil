@@ -1,44 +1,77 @@
 // controllers/akunController.js
-const db = require("../db"); // Sesuaikan dengan konfigurasi koneksi database Anda
 
 exports.getAccounts = async (req, res) => {
-  const query = "SELECT * FROM users";
-  db.query(query, (error, results) => {
-    if (error) {
-      console.error("Error fetching users:", error);
-      res.status(500).json({ error: "Failed to fetch users" });
-      return;
-    }
-    res.json(results);
-  });
+  try {
+    const query = "SELECT * FROM users WHERE branch = ?";
+    req.db.query(query, [req.branch], (error, results) => {
+      if (error) {
+        console.error("Error fetching users:", error);
+        return res.status(500).json({ 
+          success: false,
+          error: "Gagal mengambil data pengguna" 
+        });
+      }
+      res.json({
+        success: true,
+        data: results
+      });
+    });
+  } catch (error) {
+    console.error("Error in getAccounts:", error);
+    res.status(500).json({ 
+      success: false,
+      error: "Terjadi kesalahan saat mengambil data pengguna" 
+    });
+  }
 };
 
 exports.deleteAccount = async (req, res) => {
   const { id } = req.params;
   try {
     // Set cashier reference to NULL in orders table
-    await db.query("UPDATE orders SET cashier = NULL WHERE cashier = ?", [id]);
+    await req.db.query(
+      "UPDATE orders SET cashier = NULL WHERE cashier = ? AND branch = ?", 
+      [id, req.branch]
+    );
 
     // Now delete the user
-    await db.query("DELETE FROM users WHERE id = ?", [id]);
-    res.status(200).send("Account deleted successfully");
+    await req.db.query(
+      "DELETE FROM users WHERE id = ? AND branch = ?", 
+      [id, req.branch]
+    );
+    
+    res.status(200).json({
+      success: true,
+      message: "Akun berhasil dihapus"
+    });
   } catch (error) {
     console.error("Error deleting account:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).json({
+      success: false,
+      error: "Gagal menghapus akun"
+    });
   }
 };
 
 exports.editAccount = async (req, res) => {
   const { id } = req.params;
   const { name, username, gender, role, status } = req.body;
+  
   try {
-    await db.query(
-      "UPDATE users SET name = ?, username = ?, gender = ?, role = ?, status = ? WHERE id = ?",
-      [name, username, gender, role, status, id]
+    await req.db.query(
+      "UPDATE users SET name = ?, username = ?, gender = ?, role = ?, status = ? WHERE id = ? AND branch = ?",
+      [name, username, gender, role, status, id, req.branch]
     );
-    res.status(200).send("Account updated successfully");
+    
+    res.status(200).json({
+      success: true,
+      message: "Akun berhasil diperbarui"
+    });
   } catch (error) {
     console.error("Error updating account:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).json({
+      success: false,
+      error: "Gagal memperbarui akun"
+    });
   }
 };

@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const db = require("../db");
 const md5 = require("md5");
 
 const SECRET_KEY = "Nrp5kvfBiy1mjd8YZSxwQgajqbwukwFo";
@@ -11,7 +10,7 @@ router.post("/", (req, res) => {
   const md5Password = md5(password);
 
   const sql = "SELECT * FROM users WHERE username = ? AND password = ?";
-  db.query(sql, [username, md5Password], (err, result) => {
+  req.db.query(sql, [username, md5Password], (err, result) => {
     if (err) {
       console.error(err);
       return res.status(500).send("Internal server error");
@@ -24,7 +23,7 @@ router.post("/", (req, res) => {
       if (user.status === 0) {
         const { username, name, role, id } = user;
         const token = jwt.sign(
-          { username: username, name: name, role: role, id: id },
+          { username: username, name: name, role: role, id: id, branch: req.branch },
           SECRET_KEY,
           {
             expiresIn: "1d",
@@ -38,6 +37,7 @@ router.post("/", (req, res) => {
           username: username,
           role: role,
           id: id,
+          branch: req.branch
         });
       } else {
         res.json({

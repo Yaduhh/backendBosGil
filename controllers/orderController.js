@@ -1,29 +1,57 @@
-const db = require("../db");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-exports.getOrders = (req, res) => {
-  db.query("SELECT * FROM orders", (err, results) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-    } else {
-      res.json(results);
-    }
-  });
+exports.getOrders = async (req, res) => {
+  try {
+    const query = `
+      SELECT o.*, u.name as cashier_name 
+      FROM orders o 
+      LEFT JOIN users u ON o.cashier = u.id 
+      ORDER BY o.created_at DESC
+    `;
+    
+    req.db.query(query, (error, results) => {
+      if (error) {
+        console.error("Error fetching orders:", error);
+        return res.status(500).json({
+          success: false,
+          error: "Gagal mengambil data pesanan"
+        });
+      }
+      
+      res.json({
+        success: true,
+        data: results
+      });
+    });
+  } catch (error) {
+    console.error("Error in getOrders:", error);
+    res.status(500).json({
+      success: false,
+      error: "Terjadi kesalahan saat mengambil data pesanan"
+    });
+  }
 };
 
 const getOrderNameMiddleware = (req, res, next) => {
   const { id } = req.params;
   const query = "SELECT name FROM orders WHERE id = ?";
 
-  db.query(query, [id], (err, results) => {
+  req.db.query(query, [id], (err, results) => {
     if (err) {
-      return res.status(500).json({ error: err.message });
+      console.error("Error in getOrderNameMiddleware:", err);
+      return res.status(500).json({ 
+        success: false,
+        error: "Gagal mengambil data pesanan" 
+      });
     }
 
     if (results.length === 0) {
-      return res.status(404).json({ error: "Order not found" });
+      return res.status(404).json({ 
+        success: false,
+        error: "Pesanan tidak ditemukan" 
+      });
     }
 
     req.orderName = results[0].name.replace(/\s+/g, "_");
@@ -32,29 +60,21 @@ const getOrderNameMiddleware = (req, res, next) => {
 };
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads");
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
   },
-  filename: (req, file, cb) => {
-    const orderName = req.orderName || Date.now(); // Gunakan nama order atau timestamp sebagai fallback
-    const now = new Date();
-    const formattedDate = `${now.getFullYear()}-${String(
-      now.getMonth() + 1
-    ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}_${String(
-      now.getHours()
-    ).padStart(2, "0")}-${String(now.getMinutes()).padStart(2, "0")}-${String(
-      now.getSeconds()
-    ).padStart(2, "0")}`;
-    const filename = `${orderName}_${formattedDate}${path.extname(
-      file.originalname
-    )}`;
-    cb(null, filename);
-  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
 });
 
 const storageImageDp = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/dp"); // Folder khusus untuk imageDp
+    const dpDir = path.join("uploads", "dp");
+    if (!fs.existsSync(dpDir)) {
+      fs.mkdirSync(dpDir, { recursive: true });
+    }
+    cb(null, dpDir);
   },
   filename: (req, file, cb) => {
     const orderName = req.orderName || Date.now();
@@ -78,44 +98,224 @@ const uploadDp = multer({ storage: storageImageDp });
 exports.uploadOrderImage = upload.single("image");
 exports.uploadOrderImageDp = uploadDp.single("image");
 
-exports.updateOrder = (req, res) => {
-  const { id } = req.params;
-  const { pay, status, refund, banklunas } = req.body;
-  const image = req.file ? req.file.filename : null;
-  const query =
-    "UPDATE orders SET pay = ?, status = ?, refund = ?, image = ?, banklunas = ?, progress = 1 WHERE id = ?";
+exports.updateOrder = async (req, res) => {
+  try {
+    console.log('=== Update Order Request Start ===');
+    console.log('Headers:', req.headers);
+    console.log('Params:', req.params);
+    console.log('Body:', req.body);
+    console.log('File:', req.file);
 
-  db.query(
-    query,
-    [pay, status, refund, image, banklunas, id],
-    (err, result) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-      } else {
-        res.json({ message: "Order updated successfully" });
-      }
+    const { id } = req.params;
+    let { status, pay, refund, banklunas } = req.body;
+
+    // Handle FormData format
+    if (req.body._parts) {
+      const parts = req.body._parts;
+      status = parts.find(p => p[0] === 'status')?.[1];
+      pay = parts.find(p => p[0] === 'pay')?.[1];
+      refund = parts.find(p => p[0] === 'refund')?.[1];
+      banklunas = parts.find(p => p[0] === 'banklunas')?.[1];
     }
-  );
+
+    const image = req.file ? req.file.filename : null;
+
+    console.log('Processed data:', {
+      status,
+      pay,
+      refund,
+      banklunas,
+      image
+    });
+
+    const updateData = {
+      status: status ? parseInt(status) : undefined,
+      pay: pay ? parseFloat(pay) : undefined,
+      refund: refund ? parseFloat(refund) : undefined,
+      banklunas,
+      image,
+      progress: 1
+    };
+
+    // Remove undefined values
+    Object.keys(updateData).forEach(key => 
+      updateData[key] === undefined && delete updateData[key]
+    );
+
+    console.log('Update data:', updateData);
+
+    req.db.query(
+      'UPDATE orders SET ? WHERE id = ?',
+      [updateData, id],
+      (error, result) => {
+        if (error) {
+          console.error("Database error:", {
+            message: error.message,
+            code: error.code,
+            sqlMessage: error.sqlMessage,
+            sqlState: error.sqlState
+          });
+          return res.status(500).json({
+            success: false,
+            error: "Gagal memperbarui pesanan",
+            details: error.message
+          });
+        }
+
+        if (result.affectedRows === 0) {
+          console.log('No rows affected for order:', id);
+          return res.status(404).json({
+            success: false,
+            error: "Pesanan tidak ditemukan"
+          });
+        }
+
+        console.log('Successfully updated order:', id);
+        res.json({
+          success: true,
+          message: "Pesanan berhasil diperbarui"
+        });
+      }
+    );
+  } catch (error) {
+    console.error('Unexpected error in updateOrder:', {
+      error: error.message,
+      stack: error.stack,
+      params: req.params,
+      body: req.body,
+      headers: req.headers
+    });
+    res.status(500).json({
+      success: false,
+      error: "Terjadi kesalahan saat memperbarui pesanan",
+      details: error.message
+    });
+  } finally {
+    console.log('=== Update Order Request End ===');
+  }
 };
 
 exports.updateOrderDp = (req, res) => {
-  const { id } = req.params;
-  const { dp, sisa, status, nameDriver, nomorDriver, bank } = req.body;
-  const imageDp = req.file ? req.file.filename : null;
-  const query =
-    "UPDATE orders SET dp = ?, sisa = ?, status = ?, imageDp = ?, nameDriver = ?, nomorDriver = ?, bank = ?, progress = 1 WHERE id = ?";
+  try {
+    console.log('=== DP Request Start ===');
+    console.log('Headers:', req.headers);
+    console.log('Params:', req.params);
+    console.log('Body:', req.body);
+    console.log('File:', req.file);
 
-  db.query(
-    query,
-    [dp, sisa, status, imageDp, nameDriver, nomorDriver, bank, id],
-    (err, result) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-      } else {
-        res.json({ message: "Dp Berhasil diterima!" });
-      }
+    const { id } = req.params;
+    let { dp, sisa, status, nameDriver, nomorDriver, bank } = req.body;
+
+    // Handle FormData format
+    if (req.body._parts) {
+      const parts = req.body._parts;
+      dp = parts.find(p => p[0] === 'dp')?.[1];
+      sisa = parts.find(p => p[0] === 'sisa')?.[1];
+      status = parts.find(p => p[0] === 'status')?.[1];
+      nameDriver = parts.find(p => p[0] === 'nameDriver')?.[1];
+      nomorDriver = parts.find(p => p[0] === 'nomorDriver')?.[1];
+      bank = parts.find(p => p[0] === 'bank')?.[1];
     }
-  );
+
+    const imageDp = req.file ? req.file.filename : null;
+
+    console.log('Processed data:', {
+      dp,
+      sisa,
+      status,
+      nameDriver,
+      nomorDriver,
+      bank,
+      imageDp
+    });
+
+    // Validate required fields
+    if (!dp || !sisa || !bank) {
+      console.log('Validation failed - missing fields:', { dp, sisa, bank });
+      return res.status(400).json({
+        success: false,
+        error: "DP, sisa pembayaran, dan bank harus diisi"
+      });
+    }
+
+    // Validate numeric values
+    if (isNaN(parseFloat(dp)) || isNaN(parseFloat(sisa))) {
+      console.log('Validation failed - invalid numbers:', { dp, sisa });
+      return res.status(400).json({
+        success: false,
+        error: "DP dan sisa pembayaran harus berupa angka"
+      });
+    }
+
+    const query = `
+      UPDATE orders 
+      SET dp = ?, 
+          sisa = ?, 
+          status = ?, 
+          imageDp = ?, 
+          nameDriver = ?, 
+          nomorDriver = ?, 
+          bank = ?, 
+          progress = 1 
+      WHERE id = ?
+    `;
+
+    const values = [
+      parseFloat(dp),
+      parseFloat(sisa),
+      parseInt(status) || 0,
+      imageDp,
+      nameDriver || null,
+      nomorDriver || null,
+      bank,
+      id
+    ];
+
+    console.log('Executing query with values:', values);
+
+    req.db.query(query, values, (err, result) => {
+      if (err) {
+        console.error('Database error:', {
+          message: err.message,
+          code: err.code,
+          sqlMessage: err.sqlMessage,
+          sqlState: err.sqlState
+        });
+        return res.status(500).json({ 
+          success: false,
+          error: "Gagal memperbarui DP pesanan",
+          details: err.message
+        });
+      }
+      if (result.affectedRows === 0) {
+        console.log('No rows affected for order:', id);
+        return res.status(404).json({ 
+          success: false,
+          error: "Pesanan tidak ditemukan" 
+        });
+      }
+      console.log('Successfully updated DP for order:', id);
+      res.json({ 
+        success: true,
+        message: "DP Berhasil diterima!" 
+      });
+    });
+  } catch (error) {
+    console.error('Unexpected error in updateOrderDp:', {
+      error: error.message,
+      stack: error.stack,
+      params: req.params,
+      body: req.body,
+      headers: req.headers
+    });
+    res.status(500).json({
+      success: false,
+      error: "Terjadi kesalahan saat memperbarui DP",
+      details: error.message
+    });
+  } finally {
+    console.log('=== DP Request End ===');
+  }
 };
 
 // CHANGE IDENTITY DRIVER
@@ -123,85 +323,115 @@ exports.updateOrderDriver = (req, res) => {
   const { id } = req.params;
   const { nameDriver, nomorDriver } = req.body;
 
-  console.log(id, nameDriver, nomorDriver);
-  const query =
-    "UPDATE orders SET nameDriver = ?, nomorDriver = ? WHERE id = ?";
+  if (!nameDriver || !nomorDriver) {
+    return res.status(400).json({
+      success: false,
+      error: "Nama dan nomor driver harus diisi"
+    });
+  }
 
-  db.query(query, [nameDriver, nomorDriver, id], (err, result) => {
+  const query = `
+    UPDATE orders 
+    SET nameDriver = ?, 
+        nomorDriver = ? 
+    WHERE id = ?
+  `;
+
+  req.db.query(query, [nameDriver, nomorDriver, id], (err, result) => {
     if (err) {
-      res.status(500).json({ error: err.message });
-    } else {
-      res.json({ message: "Dp Berhasil diterima!" });
+      console.error("Error updating driver info:", err);
+      return res.status(500).json({ 
+        success: false,
+        error: "Gagal memperbarui informasi driver" 
+      });
     }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ 
+        success: false,
+        error: "Pesanan tidak ditemukan" 
+      });
+    }
+    res.json({ 
+      success: true,
+      message: "Informasi driver berhasil diperbarui" 
+    });
   });
 };
 
 exports.updateStatus = (req, res) => {
   const { id } = req.params;
   const { progress } = req.body;
-  const query = "UPDATE orders SET progress = ? WHERE id = ?";
 
-  db.query(query, [progress, id], (err, result) => {
+  if (progress === undefined) {
+    return res.status(400).json({
+      success: false,
+      error: "Status progress harus diisi"
+    });
+  }
+
+  const query = `
+    UPDATE orders 
+    SET progress = ? 
+    WHERE id = ?
+  `;
+
+  req.db.query(query, [progress, id], (err, result) => {
     if (err) {
-      res.status(500).json({ error: err.message });
-    } else {
-      res.json({ message: "Order updated successfully" });
+      console.error("Error updating order status:", err);
+      return res.status(500).json({ 
+        success: false,
+        error: "Gagal memperbarui status pesanan" 
+      });
     }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ 
+        success: false,
+        error: "Pesanan tidak ditemukan" 
+      });
+    }
+    res.json({ 
+      success: true,
+      message: "Status pesanan berhasil diperbarui" 
+    });
   });
 };
 
-exports.deleteOrder = (req, res) => {
+exports.deleteOrder = async (req, res) => {
   const { id } = req.params;
-  const { parsedPesanan } = req.body;
-  // Dapatkan nama file gambar yang terkait dengan order
-  const queryGetImage = "SELECT image FROM orders WHERE id = ?";
-
-  db.query(queryGetImage, [id], (err, results) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-
-    if (results.length === 0) {
-      return res.status(404).json({ error: "Order not found" });
-    }
-
-    const imageName = results[0].image;
-
-    // Hapus order dari database
-    const queryDeleteOrder = "DELETE FROM orders WHERE id = ?";
-
-    db.query(queryDeleteOrder, [id], (err, result) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      // Jika ada gambar, hapus dari filesystem
-      if (imageName) {
-        const imagePath = path.join(__dirname, "..", "uploads", imageName);
-
-        fs.unlink(imagePath, (err) => {
-          if (err) {
-            console.error("Failed to delete image file:", err);
-          }
-        });
-      }
-
-      // Update stok menu berdasarkan parsedPesanan
-      if (parsedPesanan) {
-        parsedPesanan.forEach((item) => {
-          const queryUpdateStock =
-            "UPDATE menu SET stock = stock + ? WHERE name = ?";
-          db.query(queryUpdateStock, [item.jumlah, item.menu], (err) => {
-            if (err) {
-              console.error("Failed to update menu stock:", err);
-            }
+  
+  try {
+    req.db.query(
+      'DELETE FROM orders WHERE id = ?',
+      [id],
+      (error, result) => {
+        if (error) {
+          console.error("Error deleting order:", error);
+          return res.status(500).json({
+            success: false,
+            error: "Gagal menghapus pesanan"
           });
+        }
+
+        if (result.affectedRows === 0) {
+          return res.status(404).json({
+            success: false,
+            error: "Pesanan tidak ditemukan"
+          });
+        }
+
+        res.json({
+          success: true,
+          message: "Pesanan berhasil dihapus"
         });
       }
-
-      res.json({ message: "Order deleted successfully" });
+    );
+  } catch (error) {
+    console.error("Error in deleteOrder:", error);
+    res.status(500).json({
+      success: false,
+      error: "Terjadi kesalahan saat menghapus pesanan"
     });
-  });
+  }
 };
 
 exports.updateOrderPesanan = (req, res) => {
@@ -222,87 +452,108 @@ exports.updateOrderPesanan = (req, res) => {
     pesanan,
   } = req.body;
 
-  // Konversi orderanBuat untuk mengatasi perbedaan waktu
+  if (!normalprice || !price || !nama || !nophone) {
+    return res.status(400).json({
+      success: false,
+      error: "Data pesanan tidak lengkap"
+    });
+  }
+
   const correctedOrderanBuat = new Date(orderanBuat);
   correctedOrderanBuat.setHours(correctedOrderanBuat.getHours());
 
-  // Pertama, ambil nilai dp dan status dari database
   const selectQuery = `SELECT dp, status FROM orders WHERE id = ?`;
 
-  db.query(selectQuery, [id], (err, results) => {
+  req.db.query(selectQuery, [id], (err, results) => {
     if (err) {
-      return res.status(500).json({ error: err.message });
+      console.error("Error fetching order details:", err);
+      return res.status(500).json({ 
+        success: false,
+        error: "Gagal mengambil detail pesanan" 
+      });
     }
 
     if (results.length === 0) {
-      return res.status(404).json({ error: "Order not found" });
+      return res.status(404).json({ 
+        success: false,
+        error: "Pesanan tidak ditemukan" 
+      });
     }
 
-    // Ambil nilai dp dan status dari hasil query
     const dp = results[0].dp;
     let status = results[0].status;
+    let progress = 1;
 
-    // Ubah status jika status saat ini adalah 2, jadikan 1
     if (status === 2) {
       status = 1;
+      progress = 1;
+    } else if (status === 1 ){
+      status = 0;
+      progress = 0;
     }
 
-    // Hitung sisa (balance)
-    const sisa = dp ? price - dp : price;
+    const sisa = price - dp;
+    const query = `
+      UPDATE orders 
+      SET normalprice = ?, 
+          price = ?, 
+          name = ?, 
+          noted = ?, 
+          alamat = ?, 
+          nophone = ?, 
+          ongkir = ?, 
+          orderanBuat = ?, 
+          pengambilan = ?, 
+          timeDeliver = ?, 
+          kurir = ?, 
+          pajak = ?, 
+          pesanan = ?, 
+          status = ?, 
+          sisa = ?,
+          pay = 0,
+          progress = ?
+      WHERE id = ?
+    `;
 
-    // Lanjutkan dengan update order setelah mendapatkan dp dan status
-    const updateQuery = `
-      UPDATE orders SET 
-        normalprice = ?, 
-        price = ?, 
-        sisa = ?,
-        name = ?, 
-        noted = ?, 
-        alamat = ?, 
-        nophone = ?, 
-        ongkir = ?, 
-        orderanBuat = ?, 
-        pengambilan = ?, 
-        timeDeliver = ?, 
-        kurir = ?, 
-        pajak = ?,
-        pesanan = ?,
-        status = ?
-      WHERE id = ?`;
+    const values = [
+      parseFloat(normalprice),
+      parseFloat(price),
+      nama,
+      noted || null,
+      alamat || null,
+      nophone,
+      parseFloat(ongkir) || 0,
+      correctedOrderanBuat,
+      pengambilan || null,
+      timeDeliver || null,
+      kurir || null,
+      parseFloat(pajak) || 0,
+      JSON.stringify(pesanan),
+      status,
+      sisa,
+      progress,
+      id
+    ];
 
-    db.query(
-      updateQuery,
-      [
-        normalprice,
-        price,
-        sisa,
-        nama,
-        noted,
-        alamat,
-        nophone,
-        ongkir,
-        correctedOrderanBuat,
-        pengambilan,
-        timeDeliver,
-        kurir,
-        pajak,
-        JSON.stringify(pesanan),
-        status, // masukkan status yang sudah diperbarui
-        id,
-      ],
-      (err, result) => {
-        if (err) {
-          return res.status(500).json({ error: err.message });
-        }
-
-        // Check if any rows were affected
-        if (result.affectedRows === 0) {
-          return res.status(404).json({ error: "Order not found" });
-        }
-
-        res.json({ message: "Order updated successfully", status });
+    req.db.query(query, values, (err, result) => {
+      if (err) {
+        console.error("Error updating order:", err);
+        return res.status(500).json({ 
+          success: false,
+          error: "Gagal memperbarui pesanan" 
+        });
       }
-    );
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ 
+          success: false,
+          error: "Pesanan tidak ditemukan" 
+        });
+      }
+      res.json({ 
+        success: true,
+        message: "Pesanan berhasil diperbarui" 
+      });
+    });
   });
 };
 
@@ -324,35 +575,43 @@ exports.updateOrderPesananReservasi = (req, res) => {
     status_reservasi
   } = req.body;
 
-  // Konversi orderanBuat untuk mengatasi perbedaan waktu
+  if (!normalprice || !price || !nama || !nophone || !from_jam || !until_jam || !jumlah_orang) {
+    return res.status(400).json({
+      success: false,
+      error: "Data reservasi tidak lengkap"
+    });
+  }
+
   const correctedOrderanBuat = new Date(orderanBuat);
   correctedOrderanBuat.setHours(correctedOrderanBuat.getHours());
 
-  // Pertama, ambil nilai dp dan status dari database
   const selectQuery = `SELECT dp, status FROM orders WHERE id = ?`;
 
-  db.query(selectQuery, [id], (err, results) => {
+  req.db.query(selectQuery, [id], (err, results) => {
     if (err) {
-      return res.status(500).json({ error: err.message });
+      console.error("Error fetching reservation details:", err);
+      return res.status(500).json({ 
+        success: false,
+        error: "Gagal mengambil detail reservasi" 
+      });
     }
 
     if (results.length === 0) {
-      return res.status(404).json({ error: "Order not found" });
+      return res.status(404).json({ 
+        success: false,
+        error: "Reservasi tidak ditemukan" 
+      });
     }
 
-    // Ambil nilai dp dan status dari hasil query
     const dp = results[0].dp;
     let status = results[0].status;
 
-    // Ubah status jika status saat ini adalah 2, jadikan 1
     if (status === 2) {
       status = 1;
     }
 
-    // Hitung sisa (balance)
     const sisa = dp ? price - dp : price;
 
-    // Lanjutkan dengan update order setelah mendapatkan dp dan status
     const updateQuery = `
       UPDATE orders SET 
         normalprice = ?, 
@@ -376,37 +635,45 @@ exports.updateOrderPesananReservasi = (req, res) => {
         progress = 0
       WHERE id = ?`;
 
-    db.query(
-      updateQuery,
-      [
-        normalprice,
-        price,
-        sisa,
-        nama,
-        noted,
-        nophone,
-        correctedOrderanBuat,
-        pajak,
-        JSON.stringify(pesanan),
-        vip, 
-        jumlah_orang,
-        from_jam,
-        until_jam,
-        id,
-      ],
-      (err, result) => {
-        if (err) {
-          return res.status(500).json({ error: err.message });
-        }
+    const values = [
+      parseFloat(normalprice),
+      parseFloat(price),
+      sisa,
+      nama,
+      noted || null,
+      nophone,
+      correctedOrderanBuat,
+      parseFloat(pajak) || 0,
+      JSON.stringify(pesanan),
+      vip || null,
+      parseInt(jumlah_orang),
+      from_jam,
+      until_jam,
+      id
+    ];
 
-        // Check if any rows were affected
-        if (result.affectedRows === 0) {
-          return res.status(404).json({ error: "Order not found" });
-        }
-
-        res.json({ message: "Order updated successfully", status });
+    req.db.query(updateQuery, values, (err, result) => {
+      if (err) {
+        console.error("Error updating reservation:", err);
+        return res.status(500).json({ 
+          success: false,
+          error: "Gagal memperbarui reservasi" 
+        });
       }
-    );
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ 
+          success: false,
+          error: "Reservasi tidak ditemukan" 
+        });
+      }
+
+      res.json({ 
+        success: true,
+        message: "Reservasi berhasil diperbarui",
+        status 
+      });
+    });
   });
 };
 

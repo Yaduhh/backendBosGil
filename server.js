@@ -17,6 +17,7 @@ const detailProduk = require("./routes/detailProduk");
 const editProdukRouter = require("./routes/editProduk");
 const editUserRouter = require("./routes/updateUser");
 const loginRouter = require("./routes/login");
+const userRoutes = require("./routes/userRoutes")
 const registerRouter = require("./routes/register");
 const { updateOrderPesanan } = require("./controllers/orderController");
 const { updateOrderPesananReservasi } = require("./controllers/orderController");
@@ -36,21 +37,70 @@ const generateReceiptRoute = require("./routes/generateReceiptRoute");
 
 app.use(express.json());
 
+// CORS configuration
 const corsOptions = {
-  origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type"],
+  origin: true, // Allow all origins
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "x-branch-id", "Authorization"],
+  credentials: true
 };
 
 app.use(cors(corsOptions));
 
-app.use((req, res, next) => {
-  next();
-});
+// Middleware to select database based on request
+const selectDatabase = (req, res, next) => {
+  // Get branch from query parameter, header, or default to condet
+  const branch = req.query.branch || req.headers['x-branch-id'] || 'condet';
+  
+  console.log('=== Database Selection ===');
+  console.log('Request URL:', req.originalUrl);
+  console.log('Headers:', JSON.stringify(req.headers, null, 2));
+  console.log('Query params:', req.query);
+  console.log('Selected branch:', branch);
+  
+  try {
+    // Get the database pool for the specified branch
+    req.db = db.getPool(branch);
+    req.branch = branch;
+    console.log('Using database:', db.dbConfigs[branch].database);
+    console.log('=======================');
+    next();
+  } catch (error) {
+    console.error('Database selection error:', error);
+    return res.status(400).json({ 
+      success: false,
+      message: `Invalid branch selection: ${error.message}` 
+    });
+  }
+};
+
+// Apply the database selection middleware to all routes
+app.use(selectDatabase);
+
+// Create branch-specific directories
+const createBranchDirectories = () => {
+  const branches = Object.keys(db.dbConfigs);
+  branches.forEach(branch => {
+    const branchDir = path.join(__dirname, 'uploads', branch);
+    const dpDir = path.join(branchDir, 'dp');
+    const assetsDir = path.join(__dirname, 'assets', branch);
+    
+    if (!fs.existsSync(branchDir)) {
+      fs.mkdirSync(branchDir, { recursive: true });
+    }
+    if (!fs.existsSync(dpDir)) {
+      fs.mkdirSync(dpDir, { recursive: true });
+    }
+    if (!fs.existsSync(assetsDir)) {
+      fs.mkdirSync(assetsDir, { recursive: true });
+    }
+  });
+};
+
+// Create directories on startup
+createBranchDirectories();
 
 // Routes
-
-// API NOTA
 app.use("/", generateReceiptRoute);
 
 app.post("/orders", (req, res) => {
@@ -72,7 +122,7 @@ app.post("/orders", (req, res) => {
   } = req.body;
 
   if (!nama || nama.trim() === "") {
-    return res.status(400).send("Nama pelanggan harus diisi");
+    return res.status(400).json({ error: "Nama pelanggan harus diisi" });
   }
 
   const orderanBuatDate = new Date(orderanBuat);
@@ -100,7 +150,7 @@ app.post("/orders", (req, res) => {
 
   const sql =
     "INSERT INTO orders (name, pesanan, normalprice, price, status, refund, progress, date, cashier, noted, nophone, alamat, ongkir, orderanBuat, pengambilan, timeDeliver, kurir, pajak) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-  db.query(
+  req.db.query(
     sql,
     [
       nama,
@@ -120,14 +170,18 @@ app.post("/orders", (req, res) => {
       pengambilan,
       timeDeliver,
       kurir,
-      pajak,
+      pajak
     ],
     (err, result) => {
       if (err) {
-        console.log(err);
-        return res.status(500).send("Error saving to database");
+        console.error("Error saving order to database:", err);
+        return res.status(500).json({ error: "Gagal menyimpan order ke database" });
       }
-      res.status(200).send("Order saved to database");
+      res.status(200).json({ 
+        success: true,
+        message: "Order berhasil disimpan",
+        orderId: result.insertId 
+      });
     }
   );
 });
@@ -152,7 +206,7 @@ app.post("/orders-reservasi", (req, res) => {
   } = req.body;
 
   if (!nama || nama.trim() === "") {
-    return res.status(400).send("Nama pelanggan harus diisi");
+    return res.status(400).json({ error: "Nama pelanggan harus diisi" });
   }
 
   const orderanBuatDate = new Date(orderanBuat);
@@ -180,7 +234,7 @@ app.post("/orders-reservasi", (req, res) => {
 
   const sql =
     "INSERT INTO orders (name, pesanan, normalprice, price, status, refund, progress, date, cashier, noted, nophone, orderanBuat, pajak, from_jam, until_jam, jumlah_orang, vip, status_reservasi) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-  db.query(
+  req.db.query(
     sql,
     [
       nama,
@@ -204,10 +258,14 @@ app.post("/orders-reservasi", (req, res) => {
     ],
     (err, result) => {
       if (err) {
-        console.log(err);
-        return res.status(500).send("Error saving to database");
+        console.error("Error saving reservation to database:", err);
+        return res.status(500).json({ error: "Gagal menyimpan reservasi ke database" });
       }
-      res.status(200).send("Order saved to database");
+      res.status(200).json({ 
+        success: true,
+        message: "Reservasi berhasil disimpan",
+        orderId: result.insertId 
+      });
     }
   );
 });
@@ -254,12 +312,17 @@ app.use("/register", registerRouter);
 app.use("/login", loginRouter);
 app.use("/", editUserRouter);
 
+// User Routes
+app.use("/api", userRoutes);  // This will handle all /api/* routes
+
 // Khusus Admin
 app.get("/daftarAkun", akunController.getAccounts);
 app.delete("/deleteAkun/:id", akunController.deleteAccount);
 app.put("/editAkun/:id", akunController.editAccount);
 
-app.use("/assets", express.static(path.join(__dirname, "assets")));
+// Serve static files from branch-specific directories
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
+
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.listen(port, "0.0.0.0", () => {

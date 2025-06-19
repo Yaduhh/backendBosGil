@@ -3,25 +3,19 @@ const { formatTanggal, formatTime, formatDateStruk, formatHarga } = require('../
 const adjustTimeDeliver = (timeDeliver) => {
   const [hours, minutes] = timeDeliver.split(":").map(Number);
   const date = new Date();
-  date.setHours(hours);
-  date.setMinutes(minutes - 0);
-
-  // Handle cases where minutes become negative and adjust accordingly
-  const adjustedHours = date.getHours().toString().padStart(2, "0");
-  const adjustedMinutes = date.getMinutes().toString().padStart(2, "0");
-
-  return `${adjustedHours}:${adjustedMinutes}`;
+  date.setHours(hours, minutes - 0);
+  return date.toTimeString().slice(0, 5);
 };
 
-const strukPemesananAmpel = async (order) => {
-    const outlet = "BOSGIL AMPEL";
+const strukReservasiPagesangan = async (order) => {
+  const outlet = "BOSGIL PAGESANGAN";
   const storeAddress =
-    "JL. KH. Mas Mansyur No 144, Pabean Cantikan, Ampel Surabaya";
-  const phoneNumber = "0811-1699-817";
-  const bank_bca = "8841009541";
-  const nama_bank_bca = "CV. MAKANAN SEGALA ACARA SURABAYA";
-  const bank_mandiri = "1550014173036";
-  const nama_bank_mandiri = "CV. MAKANAN SEGALA ACARA SURABAYAI";
+    "JL. Taman Gayungsari Barat II No.38 Kota Suarabaya, Jawa Timur";
+  const phoneNumber = "0811-8668-857";
+  const bank_bca = "7235 273 306";
+  const nama_bank_bca = "FAJAR MAULANA";
+  const bank_mandiri = "1760 002 053 468";
+  const nama_bank_mandiri = "FAJAR MAULANA";
   const parsedPesanan = JSON.parse(order.pesanan);
 
   return `
@@ -54,6 +48,18 @@ const strukPemesananAmpel = async (order) => {
             .title {
               font-size: 24px;
               font-weight: 500,
+              margin-bottom: 5px;
+              margin-top: -2px;
+              color:#000;
+            }
+            .title-reservasi {
+              font-size: 24px;
+              font-weight: 700,
+              color:#000;
+            }
+            .sub-title {
+              font-size: 20px;
+              font-weight: 400,
               margin-bottom: 5px;
               margin-top: -2px;
               color:#000;
@@ -121,17 +127,17 @@ const strukPemesananAmpel = async (order) => {
         </head>
         <body>
           <div class="header">
-            <img src="https://bosgil.com/logo.jpeg" alt="Logo" style="width: 260px; height: auto; margin-top:5px"/>
-            <div class="title" style="margin-top:20px; font-weight:500;">${outlet}</div>
-            <div class="title" style="margin-top:10px; font-weight:500;">${storeAddress}</div>
-              <div class="info" style="margin-top:10px;">Admin: ${phoneNumber}</div>
+            <img src="https://bosgil.com/logo.jpeg" alt="Logo" style="width: 260px; height: auto; margin-top:15px"/>
+            <div class="title" style="margin-top:10px; font-weight:500;">${outlet}</div>
+            <div class="sub-title" style="margin-top:10px; font-weight:500;">${storeAddress}</div>
+              <div class="info" style="margin-top:10px;">Admin I ${"     "}: ${phoneNumber}</div>
             </div>
             <div class="underline" style="margin-top:10px;"></div>
             <div class="receipt-body">
               <div class="info" style="margin-top:5px;">Tanggal : ${formatTanggal(
                 order.date
               )}</div>
-              <div class="info" style="margin-top:5px;">DIbuat Jam ${formatTime(
+              <div class="info" style="margin-top:5px;">Dibuat Jam ${formatTime(
                 order.date
               )}</div>
               <div class="info" style="margin-top:5px;">Kasir : ${
@@ -142,13 +148,6 @@ const strukPemesananAmpel = async (order) => {
                 order.id
               }${formatDateStruk(order.date)}</div>
 
-              <div class="info" style="margin-top:5px;">Orderan Buat : ${formatTanggal(
-                order.orderanBuat
-              )}</div>
-              <div class="info" style="margin-top:5px;">${
-                order.pengambilan === "diambil" ? `Diambil Jam` : `Dikirim Jam`
-              } ${adjustTimeDeliver(order.timeDeliver)}</div>
-
               <div class="info" style="margin-top:5px;">Nama Cust : ${
                 order.name
               }</div>
@@ -158,20 +157,22 @@ const strukPemesananAmpel = async (order) => {
                  ? String(order.nophone).slice(2)
                  : order.nophone
              }</div>
-
-              <div class="info" style="margin-top:5px;"">Alamat : ${
-                order.alamat
-              }</div>
-
+             
               <div class="batas"></div>
               <div class="underline"></div>
               <div class="batas">
               
-              <div class="info-row" style="margin-top:5px;">
-                <div class="info"w style="text-transform:capitalize;">${
-                  order.pengambilan
-                } ${order.kurir ? `: ${order.kurir}` : ""}</div>
-              </div>
+              <div class="info" style="margin-top:5px;">VIP : ${
+                order.vip
+              }${" - "} ${order.jumlah_orang} Orang</div>
+
+              <div class="info" style="margin-top:5px;">Reservasi Buat : ${formatTanggal(
+                order.orderanBuat
+              )}</div>
+
+              <div class="info" style="margin-top:5px;">Waktu Reservasi : ${adjustTimeDeliver(
+                order.from_jam
+              )} - ${adjustTimeDeliver(order.until_jam)}</div>
 
               <div class="batas"></div>
               <div class="underline"></div>
@@ -214,21 +215,6 @@ const strukPemesananAmpel = async (order) => {
             <div class="underline"></div>
             <div class="batas"></div>
 
-            <div class="info-row">
-              <div class="info">Sub Total :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
-                <div class="info">${formatHarga(order.normalprice)}</div>
-              </div>
-            </div>
-            
-            <div class="info-row">
-              <div class="info">Biaya Ongkir :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
-                <div class="info">${formatHarga(order.ongkir)}</div>
-              </div>
-            </div>
             <div class="info-row">
               <div class="info">Total :</div>
               <div class="info-row-format">
@@ -305,4 +291,4 @@ const strukPemesananAmpel = async (order) => {
     `;
 };
 
-module.exports = { strukPemesananAmpel };
+module.exports = { strukReservasiPagesangan };

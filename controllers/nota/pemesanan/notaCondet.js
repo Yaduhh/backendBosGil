@@ -161,7 +161,7 @@ const notaCondet = async (order) => {
                   ? String(order.nophone).slice(2)
                   : order.nophone
               }</b></div>
-              <div class="info" style="margin-top:5px;"">Alamat : ${
+              <div class="info" style="margin-top:5px; text-align:left;">Alamat : ${
                 order.alamat
               }</div>
 
@@ -249,7 +249,9 @@ const notaCondet = async (order) => {
                       <div class="batas"></div>
                       <div class="batas"></div>
                       <div class="info-row">
-                        <div class="info">DP :</div>
+                        <div class="info">DP - ${
+                order.bank === "CASH" ? order.bank : `${order.bank}`
+              } :</div>
                         <div class="info-row-format">
                           <div class="info">Rp.</div>
                           <div class="info">${formatHarga(order.dp)}</div>

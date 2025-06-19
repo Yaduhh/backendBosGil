@@ -109,6 +109,9 @@ const strukPemesananBsd = async (order) => {
               margin-top: 10px;
               margin-bottom: 10px;
             }
+            .info-catatan {
+              margin-bottom:10px;
+            }
           </style>
         </head>
         <body>
@@ -192,6 +195,9 @@ const strukPemesananBsd = async (order) => {
                           )}
                         </div>  
                       </div>
+                      <div class="info-catatan">
+                        ${item.catatan && `Note: ${item.catatan}`}
+                      </div>
                     `
                   )
                   .join("")}
@@ -207,16 +213,7 @@ const strukPemesananBsd = async (order) => {
                 <div class="info">${formatHarga(order.normalprice)}</div>
               </div>
             </div>
-            
-            <div class="info-row">
-              <div class="info">Pajak :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
-                <div class="info">${formatHarga(
-                  order.normalprice * (order.pajak / 100)
-                )}</div>
-              </div>
-            </div>
+
             <div class="info-row">
               <div class="info">Biaya Ongkir :</div>
               <div class="info-row-format">

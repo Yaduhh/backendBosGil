@@ -59,6 +59,9 @@ const strukPemesananPagesangan = async (order) => {
               font-weight: 500,
               color:#000;
             }
+            .info-catatan {
+              margin-bottom:10px;
+            }
             .thanks {
               text-align: center;
               margin-top: 3px;
@@ -117,7 +120,7 @@ const strukPemesananPagesangan = async (order) => {
             <img src="https://bosgil.com/logo.jpeg" alt="Logo" style="width: 260px; height: auto; margin-top:5px"/>
             <div class="title" style="margin-top:20px; font-weight:500;">${outlet}</div>
             <div class="title" style="margin-top:10px; font-weight:500;">${storeAddress}</div>
-              <div class="info" style="margin-top:10px;">${phoneNumber}</div>
+              <div class="info" style="margin-top:10px;">Admin: ${phoneNumber}</div>
             </div>
             <div class="underline" style="margin-top:10px;"></div>
             <div class="receipt-body">
@@ -146,11 +149,14 @@ const strukPemesananPagesangan = async (order) => {
                 order.name
               }</div>
 
-              <div class="info" style="margin-top:5px;">No. Telp : 0${
-                order.nophone
-              }</div>
+             <div class="info" style="margin-top:5px;">No. Telp : 0${
+               String(order.nophone).startsWith("62")
+                 ? String(order.nophone).slice(2)
+                 : order.nophone
+             }</div>
+
               <div class="info" style="margin-top:5px;"">Alamat : ${
-                order.alamat === "Diambil" ? "-" : order.alamat
+                order.alamat
               }</div>
 
               <div class="batas"></div>
@@ -193,6 +199,9 @@ const strukPemesananPagesangan = async (order) => {
                           )}
                         </div>  
                       </div>
+                      <div class="info-catatan">
+                        ${item.catatan && `Note: ${item.catatan}`}
+                      </div>
                     `
                   )
                   .join("")}
@@ -209,15 +218,6 @@ const strukPemesananPagesangan = async (order) => {
               </div>
             </div>
             
-            <div class="info-row">
-              <div class="info">Pajak :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
-                <div class="info">${formatHarga(
-                  order.normalprice * (order.pajak / 100)
-                )}</div>
-              </div>
-            </div>
             <div class="info-row">
               <div class="info">Biaya Ongkir :</div>
               <div class="info-row-format">
@@ -247,16 +247,19 @@ const strukPemesananPagesangan = async (order) => {
               </div>
             </div>
             ${
-              order.dp > 0
-                ? `<div class="info-row">
-                  <div class="info">Sisa Pembayaran :</div>
-                  <div class="info-row-format">
-                    <div class="info">Rp.</div>
-                    <div class="info">${formatHarga(order.sisa)}</div>
-                  </div>
-                </div>`
+              order.sisa !== 0
+                ? `
+              <div class="info-row">
+                <div class="info">Sisa Pembayaran :</div>
+                <div class="info-row-format">
+                  <div class="info">Rp.</div>
+                  <div class="info">${formatHarga(order.sisa)}</div>
+                </div>
+              </div>
+            `
                 : ""
             }
+            
 
             <div class="info-row">
               <div class="info">Pembayaran ${
@@ -271,9 +274,13 @@ const strukPemesananPagesangan = async (order) => {
               <div class="info">Kembalian :</div>
               <div class="info-row-format">
                 <div class="info">Rp.</div>
-                <div class="info">${formatHarga(order.pay - order.sisa)}</div>
+                <div class="info">
+                  ${formatHarga(
+                    order.pay - (order.sisa === 0 ? order.price : order.sisa)
+                  )}
+                </div>
               </div>
-            </div>          
+            </div>
           </div>
 
           <div class="batas"></div>
@@ -282,7 +289,7 @@ const strukPemesananPagesangan = async (order) => {
           <div class="batas"></div>
 
           <div class="thanks" style="margin-top:20px;">#KITAPASTIBISA</div>
-          <div class="thanks" style="margin-top:10px;">BOSGIL MAKANAN SEGALA ACARA</div>
+          <div class="thanks" style="margin-top:10px;">#MAKANANSEGALAACARA</div>
           <div class="thanks">Instagram : @bosgildahsyat</div>
           <div class="thanks">Tiktok : @bosgildahsyat</div>
           <div style="display:flex; justify-content:center;">

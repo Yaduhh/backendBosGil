@@ -10,18 +10,18 @@ const adjustTimeDeliver = (timeDeliver) => {
   const adjustedHours = date.getHours().toString().padStart(2, "0");
   const adjustedMinutes = date.getMinutes().toString().padStart(2, "0");
 
-  return `${adjustedHours}:${adjustedMinutes}`;
+  return `${adjustedHours}:${adjustedMinutes}`; // Returns 'HH:mm'
 };
 
-const strukPemesananAmpel = async (order) => {
-    const outlet = "BOSGIL AMPEL";
+const notaReservasiBsd = async (order) => {
+  const outlet = "NASI MANDHI BOSGIL BSD";
   const storeAddress =
-    "JL. KH. Mas Mansyur No 144, Pabean Cantikan, Ampel Surabaya";
-  const phoneNumber = "0811-1699-817";
-  const bank_bca = "8841009541";
-  const nama_bank_bca = "CV. MAKANAN SEGALA ACARA SURABAYA";
-  const bank_mandiri = "1550014173036";
-  const nama_bank_mandiri = "CV. MAKANAN SEGALA ACARA SURABAYAI";
+    "Jl. BSD Boulevard Utara No.6, Lengkong Kulon, Pagedangan, Tangerang Regency";
+  const phoneNumber = "0811-1201-2159";
+  const bank_bca = "8841-007-905";
+  const nama_bank_bca = "CV. Makanan Segala Acara BSD";
+  const bank_mandiri = "155-00-1417-0719";
+  const nama_bank_mandiri = "CV. Makanan Segala Acara BSD";
   const parsedPesanan = JSON.parse(order.pesanan);
 
   return `
@@ -53,7 +53,18 @@ const strukPemesananAmpel = async (order) => {
             }
             .title {
               font-size: 24px;
-              font-weight: 500,
+              margin-bottom: 5px;
+              margin-top: -2px;
+              color:#000;
+            }
+            .title-reservasi {
+              font-size: 24px;
+              font-weight: 700;
+              color:#000;
+            }
+            .sub-title {
+              font-size: 20px;
+              font-weight: 400;
               margin-bottom: 5px;
               margin-top: -2px;
               color:#000;
@@ -96,7 +107,7 @@ const strukPemesananAmpel = async (order) => {
             }
             .info-row-format {
               display: flex;
-              width: 150;
+              width: 38.5%;
               justify-content: space-between;
               margin-bottom: 2px;
               padding-right: 1px;
@@ -117,21 +128,25 @@ const strukPemesananAmpel = async (order) => {
               margin-top: 10px;
               margin-bottom: 10px;
             }
+            .title-reservasi {
+                font-size: 40px;
+            }
           </style>
         </head>
         <body>
           <div class="header">
+            <div class="title-reservasi" style="margin-top:20px; margin-bottom:10px font-weight:bold;">NOTA RESERVASI</div>
             <img src="https://bosgil.com/logo.jpeg" alt="Logo" style="width: 260px; height: auto; margin-top:5px"/>
-            <div class="title" style="margin-top:20px; font-weight:500;">${outlet}</div>
-            <div class="title" style="margin-top:10px; font-weight:500;">${storeAddress}</div>
-              <div class="info" style="margin-top:10px;">Admin: ${phoneNumber}</div>
+            <div class="title" style="margin-top:10px; font-weight:500;">${outlet}</div>
+            <div class="sub-title" style="margin-top:10px; font-weight:500;">${storeAddress}</div>
+              <div class="info" style="margin-top:10px;">Admin I ${"     "}: ${phoneNumber}</div>
             </div>
             <div class="underline" style="margin-top:10px;"></div>
             <div class="receipt-body">
               <div class="info" style="margin-top:5px;">Tanggal : ${formatTanggal(
                 order.date
               )}</div>
-              <div class="info" style="margin-top:5px;">DIbuat Jam ${formatTime(
+              <div class="info" style="margin-top:5px;">Dibuat Jam ${formatTime(
                 order.date
               )}</div>
               <div class="info" style="margin-top:5px;">Kasir : ${
@@ -142,36 +157,35 @@ const strukPemesananAmpel = async (order) => {
                 order.id
               }${formatDateStruk(order.date)}</div>
 
-              <div class="info" style="margin-top:5px;">Orderan Buat : ${formatTanggal(
-                order.orderanBuat
-              )}</div>
-              <div class="info" style="margin-top:5px;">${
-                order.pengambilan === "diambil" ? `Diambil Jam` : `Dikirim Jam`
-              } ${adjustTimeDeliver(order.timeDeliver)}</div>
-
-              <div class="info" style="margin-top:5px;">Nama Cust : ${
+              <div class="info" style="margin-top:5px;">Nama Cust : <b>${
                 order.name
-              }</div>
+              }</b></div>
 
-             <div class="info" style="margin-top:5px;">No. Telp : 0${
-               String(order.nophone).startsWith("62")
-                 ? String(order.nophone).slice(2)
-                 : order.nophone
-             }</div>
-
-              <div class="info" style="margin-top:5px;"">Alamat : ${
-                order.alamat
-              }</div>
+              <div class="info" style="margin-top:5px;">No. Telp : <b>0${
+                String(order.nophone).startsWith("62")
+                  ? String(order.nophone).slice(2)
+                  : order.nophone
+              }</b></div>
 
               <div class="batas"></div>
               <div class="underline"></div>
               <div class="batas">
               
-              <div class="info-row" style="margin-top:5px;">
-                <div class="info"w style="text-transform:capitalize;">${
-                  order.pengambilan
-                } ${order.kurir ? `: ${order.kurir}` : ""}</div>
-              </div>
+              <div class="info" style="margin-top:5px;">VIP ROOM : <b>${
+                order.vip
+              }</b></div>
+              
+              
+<div class="info" style="margin-top:5px;">
+  Jumlah Tamu : <b>${order.jumlah_orang} Orang</b>
+</div>
+              
+              <div class="info" style="margin-top:5px;">Reservasi Buat : <b>${formatTanggal(
+                order.orderanBuat
+              )}</b></div>
+              <div class="info" style="margin-top:5px;">Waktu Reservasi : <b>${adjustTimeDeliver(
+                order.from_jam
+              )} - ${adjustTimeDeliver(order.until_jam)}</b></div>
 
               <div class="batas"></div>
               <div class="underline"></div>
@@ -213,79 +227,69 @@ const strukPemesananAmpel = async (order) => {
             <div class="batas"></div>
             <div class="underline"></div>
             <div class="batas"></div>
-
-            <div class="info-row">
-              <div class="info">Sub Total :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
-                <div class="info">${formatHarga(order.normalprice)}</div>
-              </div>
-            </div>
             
-            <div class="info-row">
-              <div class="info">Biaya Ongkir :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
-                <div class="info">${formatHarga(order.ongkir)}</div>
-              </div>
-            </div>
             <div class="info-row">
               <div class="info">Total :</div>
               <div class="info-row-format">
                 <div class="info">Rp.</div>
                 <div class="info">${formatHarga(order.price)}</div>
               </div>
+            </div>           
+
+            <div>
+                ${
+                  order.dp === 0
+                    ? ""
+                    : `
+                      <div class="batas"></div>
+                      <div class="underline"></div>
+                      <div class="batas"></div>
+                      <div class="batas"></div>
+                      <div class="info-row">
+                        <div class="info">DP :</div>
+                        <div class="info-row-format">
+                          <div class="info">Rp.</div>
+                          <div class="info">${formatHarga(order.dp)}</div>
+                        </div>
+                      </div>
+                      <div class="info-row">
+                        <div class="info">Sisa :</div>
+                        <div class="info-row-format">
+                          <div class="info">Rp.</div>
+                          <div class="info">${formatHarga(order.sisa)}</div>
+                        </div>
+                      </div>
+                    `
+                }
             </div>
 
             <div class="batas"></div>
             <div class="underline"></div>
             <div class="batas"></div>
-
-            <div class="info-row">
-              <div class="info">DP - ${
-                order.bank === "CASH" ? order.bank : `${order.bank}`
-              } :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
-                <div class="info">${formatHarga(order.dp)}</div>
-              </div>
-            </div>
-            ${
-              order.sisa !== 0
-                ? `
-              <div class="info-row">
-                <div class="info">Sisa Pembayaran :</div>
-                <div class="info-row-format">
-                  <div class="info">Rp.</div>
-                  <div class="info">${formatHarga(order.sisa)}</div>
-                </div>
-              </div>
-            `
-                : ""
-            }
+            <div class="batas"></div>
             
-
-            <div class="info-row">
-              <div class="info">Pembayaran ${
-                order.banklunas === "CASH" ? order.banklunas : order.banklunas
-              } :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
-                <div class="info">${formatHarga(order.pay)}</div>
+            <div class="info">
+              <div class="info">
+                BANK BCA
               </div>
-            </div>          
-            <div class="info-row">
-              <div class="info">Kembalian :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
-                <div class="info">
-                  ${formatHarga(
-                    order.pay - (order.sisa === 0 ? order.price : order.sisa)
-                  )}
-                </div>
+              <div class="info" style="margin-top:5px;">
+                No Rek : ${bank_bca} 
               </div>
+              <div class="info" style="padding-right:1px; margin-top:5px;">
+                 ${nama_bank_bca}
+              </div>  
             </div>
-          </div>
+             <div class="info">
+              <div class="info">
+                BANK MANDIRI
+              </div>
+              <div class="info" style="margin-top:5px;">
+                No Rek : ${bank_mandiri} 
+              </div>
+              <div class="info" style="padding-right:1px; margin-top:5px;">
+                 ${nama_bank_mandiri}
+              </div>  
+            </div>      
 
           <div class="batas"></div>
           <div class="underline"></div>
@@ -305,4 +309,4 @@ const strukPemesananAmpel = async (order) => {
     `;
 };
 
-module.exports = { strukPemesananAmpel };
+module.exports = { notaReservasiBsd };

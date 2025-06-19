@@ -47,6 +47,12 @@ const { notaReservasiPagesangan } = require("../controllers/nota/reservasi/notaR
 const { strukReservasiPagesangan } = require("../controllers/struk/reservasi/strukReservasiPagesangan");
 const { strukPemesananPagesangan} = require("../controllers/struk/pemesanan/strukPemesananPagesangan");
 
+// Bintaro
+const { notaBintaro } = require("../controllers/nota/pemesanan/notaBintaro");
+const { notaReservasiBintaro } = require("../controllers/nota/reservasi/notaReservasiBintaro");
+const { strukReservasiBintaro } = require("../controllers/struk/reservasi/strukReservasiBintaro");
+const { strukPemesananBintaro} = require("../controllers/struk/pemesanan/strukPemesananBintaro");
+
 
 const router = express.Router();
 // Utility to get branch from header
@@ -65,6 +71,7 @@ const notaReservasiMap = {
   pagesangan: notaReservasiPagesangan,
   ampel: notaReservasiAmpel,
   sidoarjo: notaReservasiSidoarjo,
+  bintaro: notaReservasiBintaro,
 };
 const strukReservasiMap = {
   condet: strukReservasiCondet,
@@ -75,6 +82,7 @@ const strukReservasiMap = {
   pagesangan: strukReservasiPagesangan,
   ampel: strukReservasiAmpel,
   sidoarjo: strukReservasiSidoarjo,
+  bintaro: strukReservasiBintaro,
 };
 const notaPemesananMap = {
   condet: notaCondet,
@@ -85,6 +93,7 @@ const notaPemesananMap = {
   pagesangan: notaPagesangan,
   ampel: notaAmpel,
   sidoarjo: notaSidoarjo,
+  bintaro: notaBintaro,
 };
 const strukPemesananMap = {
   condet: strukPemesananCondet,
@@ -95,25 +104,35 @@ const strukPemesananMap = {
   pagesangan: strukPemesananPagesangan,
   ampel: strukPemesananAmpel,
   sidoarjo: strukPemesananSidoarjo,
+  bintaro: strukPemesananBintaro,
 };
 
 // Define the route for generating receipt
 router.post("/generate-reservasi", async (req, res) => {
   const { order } = req.body;
   const branch = getBranchFromHeader(req);
-  console.log('Headers:', req.headers);
-  console.log('Detected branch:', branch);
   try {
     let htmlReceipt;
     if (order.status === 2) {
       const strukFn = strukReservasiMap[branch] || strukReservasiCondet;
-      htmlReceipt = await strukFn(order);
+      try {
+        htmlReceipt = await strukFn(order);
+      } catch (err) {
+        console.error(`Error in strukReservasiMap for branch ${branch}:`, err.stack || err);
+        return res.status(500).json({ success: false, message: `Gagal menghasilkan struk: ${err.message}` });
+      }
     } else {
       const notaFn = notaReservasiMap[branch] || notaReservasiCondet;
-      htmlReceipt = await notaFn(order);
+      try {
+        htmlReceipt = await notaFn(order);
+      } catch (err) {
+        console.error(`Error in notaReservasiMap for branch ${branch}:`, err.stack || err);
+        return res.status(500).json({ success: false, message: `Gagal menghasilkan nota: ${err.message}` });
+      }
     }
     res.json({ success: true, htmlReceipt });
   } catch (error) {
+    console.error('Error in /generate-reservasi:', error.stack || error);
     res.status(500).json({ success: false, message: 'Gagal menghasilkan struk' });
   }
 });
@@ -121,19 +140,28 @@ router.post("/generate-reservasi", async (req, res) => {
 router.post("/generate-pemesanan", async (req, res) => {
   const { order } = req.body;
   const branch = getBranchFromHeader(req);
-  console.log('Headers:', req.headers);
-  console.log('Detected branch:', branch);
   try {
     let htmlReceipt;
     if (order.status === 2) {
       const strukFn = strukPemesananMap[branch] || strukPemesananCondet;
-      htmlReceipt = await strukFn(order);
+      try {
+        htmlReceipt = await strukFn(order);
+      } catch (err) {
+        console.error(`Error in strukPemesananMap for branch ${branch}:`, err.stack || err);
+        return res.status(500).json({ success: false, message: `Gagal menghasilkan struk: ${err.message}` });
+      }
     } else {
       const notaFn = notaPemesananMap[branch] || notaCondet;
-      htmlReceipt = await notaFn(order);
+      try {
+        htmlReceipt = await notaFn(order);
+      } catch (err) {
+        console.error(`Error in notaPemesananMap for branch ${branch}:`, err.stack || err);
+        return res.status(500).json({ success: false, message: `Gagal menghasilkan nota: ${err.message}` });
+      }
     }
     res.json({ success: true, htmlReceipt });
   } catch (error) {
+    console.error('Error in /generate-pemesanan:', error.stack || error);
     res.status(500).json({ success: false, message: 'Gagal menghasilkan struk' });
   }
 });

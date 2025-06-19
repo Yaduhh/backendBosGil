@@ -49,18 +49,67 @@ const { strukPemesananPagesangan} = require("../controllers/struk/pemesanan/stru
 
 
 const router = express.Router();
+// Utility to get branch from header
+const getBranchFromHeader = (req) => {
+  const branch = req.headers["x-branch-id"] || "condet";
+  return branch.toLowerCase();
+};
+
+// Mapping for each branch to its respective nota/struk functions
+const notaReservasiMap = {
+  condet: notaReservasiCondet,
+  karawaci: notaReservasiKarawaci,
+  bsd: notaReservasiBsd,
+  bandungkota: notaReservasiBandungKota,
+  bandungbuahbatu: notaReservasiBandungBuahBatu,
+  pagesangan: notaReservasiPagesangan,
+  ampel: notaReservasiAmpel,
+  sidoarjo: notaReservasiSidoarjo,
+};
+const strukReservasiMap = {
+  condet: strukReservasiCondet,
+  karawaci: strukReservasiKarawaci,
+  bsd: strukReservasiBsd,
+  bandungkota: strukReservasiBandungKota,
+  bandungbuahbatu: strukReservasiBandungBuahBatu,
+  pagesangan: strukReservasiPagesangan,
+  ampel: strukReservasiAmpel,
+  sidoarjo: strukReservasiSidoarjo,
+};
+const notaPemesananMap = {
+  condet: notaCondet,
+  karawaci: notaKarawaci,
+  bsd: notaBsd,
+  bandungkota: notaBandungKota,
+  bandungbuahbatu: notaBandungBuahBatu,
+  pagesangan: notaPagesangan,
+  ampel: notaAmpel,
+  sidoarjo: notaSidoarjo,
+};
+const strukPemesananMap = {
+  condet: strukPemesananCondet,
+  karawaci: strukPemesananKarawaci,
+  bsd: strukPemesananBsd,
+  bandungkota: strukPemesananBandungKota,
+  bandungbuahbatu: strukPemesananBandungBuahBatu,
+  pagesangan: strukPemesananPagesangan,
+  ampel: strukPemesananAmpel,
+  sidoarjo: strukPemesananSidoarjo,
+};
+
 // Define the route for generating receipt
 router.post("/generate-reservasi", async (req, res) => {
   const { order } = req.body;
-
+  const branch = getBranchFromHeader(req);
   try {
     let htmlReceipt;
     if (order.status === 2) {
-      htmlReceipt = await strukReservasiCondet(order);
+      const strukFn = strukReservasiMap[branch] || strukReservasiCondet;
+      htmlReceipt = await strukFn(order);
     } else {
-      htmlReceipt = await notaReservasiCondet(order);
+      const notaFn = notaReservasiMap[branch] || notaReservasiCondet;
+      htmlReceipt = await notaFn(order);
     }
-
     res.json({ success: true, htmlReceipt });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Gagal menghasilkan struk' });
@@ -69,15 +118,16 @@ router.post("/generate-reservasi", async (req, res) => {
 
 router.post("/generate-pemesanan", async (req, res) => {
   const { order } = req.body;
-
+  const branch = getBranchFromHeader(req);
   try {
     let htmlReceipt;
     if (order.status === 2) {
-      htmlReceipt = await strukPemesananCondet(order);
+      const strukFn = strukPemesananMap[branch] || strukPemesananCondet;
+      htmlReceipt = await strukFn(order);
     } else {
-      htmlReceipt = await notaCondet(order);
+      const notaFn = notaPemesananMap[branch] || notaCondet;
+      htmlReceipt = await notaFn(order);
     }
-
     res.json({ success: true, htmlReceipt });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Gagal menghasilkan struk' });

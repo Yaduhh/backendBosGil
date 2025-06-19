@@ -157,7 +157,7 @@ const strukPemesananCondet = async (order) => {
                  : order.nophone
              }</b></div>
 
-              <div class="info" style="margin-top:5px;"">Alamat : ${
+              <div class="info" style="margin-top:5px; text-align:left;">Alamat : ${
                 order.alamat
               }</div>
 

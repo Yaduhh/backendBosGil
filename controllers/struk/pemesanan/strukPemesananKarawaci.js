@@ -13,15 +13,11 @@ const adjustTimeDeliver = (timeDeliver) => {
   return `${adjustedHours}:${adjustedMinutes}`;
 };
 
-const strukPemesananAmpel = async (order) => {
-    const outlet = "BOSGIL AMPEL";
+const strukPemesananKarawaci = async (order) => {
+  const outlet = "NASI MANDHI BOSGIL PUSAT";
   const storeAddress =
-    "JL. KH. Mas Mansyur No 144, Pabean Cantikan, Ampel Surabaya";
-  const phoneNumber = "0811-1699-817";
-  const bank_bca = "8841009541";
-  const nama_bank_bca = "CV. MAKANAN SEGALA ACARA SURABAYA";
-  const bank_mandiri = "1550014173036";
-  const nama_bank_mandiri = "CV. MAKANAN SEGALA ACARA SURABAYAI";
+    "Jl. Kav. Perkebunan No 1W, Karawaci, Tangerang";
+  const phoneNumber = "081315439609";
   const parsedPesanan = JSON.parse(order.pesanan);
 
   return `
@@ -124,7 +120,7 @@ const strukPemesananAmpel = async (order) => {
             <img src="https://bosgil.com/logo.jpeg" alt="Logo" style="width: 260px; height: auto; margin-top:5px"/>
             <div class="title" style="margin-top:20px; font-weight:500;">${outlet}</div>
             <div class="title" style="margin-top:10px; font-weight:500;">${storeAddress}</div>
-              <div class="info" style="margin-top:10px;">Admin: ${phoneNumber}</div>
+              <div class="info" style="margin-top:10px;">Admin 1: ${phoneNumber}</div>
             </div>
             <div class="underline" style="margin-top:10px;"></div>
             <div class="receipt-body">
@@ -142,22 +138,22 @@ const strukPemesananAmpel = async (order) => {
                 order.id
               }${formatDateStruk(order.date)}</div>
 
-              <div class="info" style="margin-top:5px;">Orderan Buat : ${formatTanggal(
+              <div class="info" style="margin-top:5px;">Orderan Buat : <b>${formatTanggal(
                 order.orderanBuat
-              )}</div>
+              )}</b></div>
               <div class="info" style="margin-top:5px;">${
                 order.pengambilan === "diambil" ? `Diambil Jam` : `Dikirim Jam`
-              } ${adjustTimeDeliver(order.timeDeliver)}</div>
+              } <b>${adjustTimeDeliver(order.timeDeliver)}</b></div>
 
-              <div class="info" style="margin-top:5px;">Nama Cust : ${
+              <div class="info" style="margin-top:5px;">Nama Cust : <b>${
                 order.name
-              }</div>
+              }</b></div>
 
-             <div class="info" style="margin-top:5px;">No. Telp : 0${
+             <div class="info" style="margin-top:5px;">No. Telp : <b>0${
                String(order.nophone).startsWith("62")
                  ? String(order.nophone).slice(2)
                  : order.nophone
-             }</div>
+             }</b></div>
 
               <div class="info" style="margin-top:5px;"">Alamat : ${
                 order.alamat
@@ -168,9 +164,9 @@ const strukPemesananAmpel = async (order) => {
               <div class="batas">
               
               <div class="info-row" style="margin-top:5px;">
-                <div class="info"w style="text-transform:capitalize;">${
+                <div class="info"w style="text-transform:capitalize;"><b>${
                   order.pengambilan
-                } ${order.kurir ? `: ${order.kurir}` : ""}</div>
+                } ${order.kurir ? `: ${order.kurir}` : ""}</b></div>
               </div>
 
               <div class="batas"></div>
@@ -305,4 +301,4 @@ const strukPemesananAmpel = async (order) => {
     `;
 };
 
-module.exports = { strukPemesananAmpel };
+module.exports = { strukPemesananKarawaci };

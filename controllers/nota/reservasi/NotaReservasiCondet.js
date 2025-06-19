@@ -243,7 +243,9 @@ const outlet = "NASI MANDHI BOSGIL CONDET";
                       <div class="batas"></div>
                       <div class="batas"></div>
                       <div class="info-row">
-                        <div class="info">DP :</div>
+                        <div class="info">DP - ${
+                order.bank === "CASH" ? order.bank : `${order.bank}`
+              } :</div>
                         <div class="info-row-format">
                           <div class="info">Rp.</div>
                           <div class="info">${formatHarga(order.dp)}</div>

@@ -18,9 +18,10 @@ const notaPagesangan = async (order) => {
   const storeAddress =
     "JL. Taman Gayungsari Barat II No.38 Kota Suarabaya, Jawa Timur";
   const phoneNumber = "0811-8668-857";
-  const norekbca = "7235273306";
-  const norekmandiri = "1760002053468 ";
-  const namerekening = "FAJAR MAULANA";
+  const bank_bca = "8841007921";
+  const nama_bank_bca = "CV. MAKANAN SEGALA ACARA SURABAYA";
+  const bank_mandiri = "1550014172988";
+  const nama_bank_mandiri = "CV. MAKANAN SEGALA ACARA SURABAYA";
   const parsedPesanan = JSON.parse(order.pesanan);
 
   return `
@@ -61,6 +62,9 @@ const notaPagesangan = async (order) => {
               font-size: 24px;
               font-weight: 500,
               color:#000;
+            }
+            .info-catatan {
+              margin-bottom:10px;
             }
             .thanks {
               text-align: center;
@@ -118,9 +122,9 @@ const notaPagesangan = async (order) => {
         <body>
           <div class="header">
             <img src="https://bosgil.com/logo.jpeg" alt="Logo" style="width: 260px; height: auto; margin-top:5px"/>
-            <div class="title" style="margin-top:4px; font-weight:500;">${outlet}</div>
-            <div class="title" style="margin-top:4px; font-weight:500;">${storeAddress}</div>
-              <div class="info">Telp : ${phoneNumber}</div>
+            <div class="title" style="margin-top:20px; font-weight:500;">${outlet}</div>
+            <div class="title" style="margin-top:10px; font-weight:500;">${storeAddress}</div>
+              <div class="info" style="margin-top:10px;">Admin : ${phoneNumber}</div>
             </div>
             <div class="underline" style="margin-top:10px;"></div>
             <div class="receipt-body">
@@ -150,7 +154,9 @@ const notaPagesangan = async (order) => {
               }</div>
 
               <div class="info" style="margin-top:5px;">No. Telp : 0${
-                order.nophone
+                String(order.nophone).startsWith("62")
+                  ? String(order.nophone).slice(2)
+                  : order.nophone
               }</div>
               <div class="info" style="margin-top:5px;"">Alamat : ${
                 order.alamat
@@ -163,7 +169,7 @@ const notaPagesangan = async (order) => {
               <div class="info-row" style="margin-top:5px;">
                 <div class="info"w style="text-transform:capitalize;">${
                   order.pengambilan
-                } ${order.kurir ? `: ${order.kurir}` : ""}</div>
+                } ${order.kurir ? `: ${order.kurir}` : ""}</div>                
               </div>
 
               <div class="batas"></div>
@@ -183,7 +189,7 @@ const notaPagesangan = async (order) => {
                       <div class="info">
                         ${item.menu}
                       </div>
-                      <div class="info-row" style="margin-top:2px; margin-bottom:5px;">
+                      <div class="info-row" style="margin-top:2px;">
                         <div class="info">
                           ${item.jumlah} X ${formatHarga(
                       parseFloat(item.hargasatuan)
@@ -195,6 +201,9 @@ const notaPagesangan = async (order) => {
                             parseFloat(item.hargasatuan) * item.jumlah
                           )}
                         </div>  
+                      </div>
+                      <div class="info-catatan">
+                        ${item.catatan && `Note: ${item.catatan}`}
                       </div>
                     `
                   )
@@ -213,15 +222,6 @@ const notaPagesangan = async (order) => {
             </div>
             
             <div class="info-row">
-              <div class="info">Pajak :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
-                <div class="info">${formatHarga(
-                  order.normalprice * (order.pajak / 100)
-                )}</div>
-              </div>
-            </div>
-            <div class="info-row">
               <div class="info">Biaya Ongkir :</div>
               <div class="info-row-format">
                 <div class="info">Rp.</div>
@@ -234,7 +234,7 @@ const notaPagesangan = async (order) => {
                 <div class="info">Rp.</div>
                 <div class="info">${formatHarga(order.price)}</div>
               </div>
-            </div>
+            </div>           
 
             <div>
                 ${
@@ -262,7 +262,7 @@ const notaPagesangan = async (order) => {
                     `
                 }
             </div>
-            
+
             <div class="batas"></div>
             <div class="underline"></div>
             <div class="batas"></div>
@@ -270,39 +270,40 @@ const notaPagesangan = async (order) => {
             
             <div class="info">
                 <div class="info">
-                    BANK BCA
+                  BANK BCA
                 </div>
                 <div class="info" style="margin-top:5px;">
-                    No Rek : ${norekbca}
+                  No Rek : ${bank_bca}
                 </div>
                 <div class="info" style="padding-right:1px; margin-top:5px;">
-                    A.N : ${namerekening}
+                  ${nama_bank_bca}
                 </div>  
-            </div>
-            
+            </div>          
             <div class="info" style="margin-top:10px;">
                 <div class="info">
-                    BANK MANDIRI
+                  BANK MANDIRI
                 </div>
                 <div class="info" style="margin-top:5px;">
-                    No Rek : ${norekmandiri}
+                  No Rek : ${bank_mandiri} 
                 </div>
                 <div class="info" style="padding-right:1px; margin-top:5px;">
-                    A.N : ${namerekening}
+                  ${nama_bank_mandiri}
                 </div>  
-            </div>
+            </div>  
 
           <div class="batas"></div>
           <div class="underline"></div>
           <div class="batas"></div>
           <div class="batas"></div>
 
-          <div class="thanks" style="margin-top:20px;">BOSGIL MAKANAN SEGALA ACARA</div>
+          <div class="thanks" style="margin-top:20px;">#KITAPASTIBISA</div>
+          <div class="thanks" style="margin-top:10px;">#MAKANANSEGALAACARA</div>
           <div class="thanks">Instagram : @bosgildahsyat</div>
           <div class="thanks">Tiktok : @bosgildahsyat</div>
           <div style="display:flex; justify-content:center;">
-            <img src="https://bosgil.com/qrfixxx.jpg" alt="qr" style="width: 160px; height: auto; margin-top:10px"/>
+          <img src="https://bosgil.com/qrfixxx.jpg" alt="qr" style="width: 160px; height: auto; margin-top:10px"/>
           </div>
+          <div class="thanks" style="margin-top:10px;">Terima Kasih</div>
         </body>
       </html>
     `;

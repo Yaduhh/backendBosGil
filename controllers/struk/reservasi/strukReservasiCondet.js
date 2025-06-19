@@ -50,7 +50,7 @@ const strukReservasiCondet = async (order) => {
               color:#000;
             }
             .title-reservasi {
-              font-size: 24px;
+              font-size: 40px;
               font-weight: 700,
               color:#000;
             }
@@ -124,6 +124,7 @@ const strukReservasiCondet = async (order) => {
         </head>
         <body>
           <div class="header">
+          <div class="title-reservasi" style="margin-top:20px; margin-bottom:10px font-weight:bold;"><b>NOTA RESERVASI</b></div>
             <img src="https://bosgil.com/logo.jpeg" alt="Logo" style="width: 260px; height: auto; margin-top:15px"/>
             <div class="title" style="margin-top:10px; font-weight:500;">${outlet}</div>
             <div class="sub-title" style="margin-top:10px; font-weight:500;">${storeAddress}</div>

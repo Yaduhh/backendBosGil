@@ -13,15 +13,15 @@ const adjustTimeDeliver = (timeDeliver) => {
   return `${adjustedHours}:${adjustedMinutes}`;
 };
 
-const strukPemesananAmpel = async (order) => {
-    const outlet = "BOSGIL AMPEL";
+const notaBandungKota = async (order) => {
+  const outlet = "BOSGIL BANDUNG KOTA";
   const storeAddress =
-    "JL. KH. Mas Mansyur No 144, Pabean Cantikan, Ampel Surabaya";
-  const phoneNumber = "0811-1699-817";
-  const bank_bca = "8841009541";
-  const nama_bank_bca = "CV. MAKANAN SEGALA ACARA SURABAYA";
-  const bank_mandiri = "1550014173036";
-  const nama_bank_mandiri = "CV. MAKANAN SEGALA ACARA SURABAYAI";
+    "JL. Taman Citarum, Bandung Kota No 3B";
+  const phoneNumber = "0811-9208-817";
+  const bank_bca = "8841009550";
+  const nama_bank_bca = "CV. MAKANAN SEGALA ACARA BANDUNG";
+  const bank_mandiri = "1550014172913";
+  const nama_bank_mandiri = "CV. MAKANAN SEGALA ACARA BANDUNG";
   const parsedPesanan = JSON.parse(order.pesanan);
 
   return `
@@ -96,7 +96,7 @@ const strukPemesananAmpel = async (order) => {
             }
             .info-row-format {
               display: flex;
-              width: 150;
+              width: 38.5%;
               justify-content: space-between;
               margin-bottom: 2px;
               padding-right: 1px;
@@ -131,7 +131,7 @@ const strukPemesananAmpel = async (order) => {
               <div class="info" style="margin-top:5px;">Tanggal : ${formatTanggal(
                 order.date
               )}</div>
-              <div class="info" style="margin-top:5px;">DIbuat Jam ${formatTime(
+              <div class="info" style="margin-top:5px;">Dibuat Jam ${formatTime(
                 order.date
               )}</div>
               <div class="info" style="margin-top:5px;">Kasir : ${
@@ -153,12 +153,11 @@ const strukPemesananAmpel = async (order) => {
                 order.name
               }</div>
 
-             <div class="info" style="margin-top:5px;">No. Telp : 0${
-               String(order.nophone).startsWith("62")
-                 ? String(order.nophone).slice(2)
-                 : order.nophone
-             }</div>
-
+              <div class="info" style="margin-top:5px;">No. Telp : 0${
+                String(order.nophone).startsWith("62")
+                  ? String(order.nophone).slice(2)
+                  : order.nophone
+              }</div>
               <div class="info" style="margin-top:5px;"">Alamat : ${
                 order.alamat
               }</div>
@@ -170,7 +169,7 @@ const strukPemesananAmpel = async (order) => {
               <div class="info-row" style="margin-top:5px;">
                 <div class="info"w style="text-transform:capitalize;">${
                   order.pengambilan
-                } ${order.kurir ? `: ${order.kurir}` : ""}</div>
+                } ${order.kurir ? `: ${order.kurir}` : ""}</div>                
               </div>
 
               <div class="batas"></div>
@@ -190,7 +189,7 @@ const strukPemesananAmpel = async (order) => {
                       <div class="info">
                         ${item.menu}
                       </div>
-                      <div class="info-row" style="margin-top:2px; margin-bottom:5px;">
+                      <div class="info-row" style="margin-top:2px;">
                         <div class="info">
                           ${item.jumlah} X ${formatHarga(
                       parseFloat(item.hargasatuan)
@@ -235,57 +234,62 @@ const strukPemesananAmpel = async (order) => {
                 <div class="info">Rp.</div>
                 <div class="info">${formatHarga(order.price)}</div>
               </div>
+            </div>           
+
+            <div>
+                ${
+                  order.dp === 0
+                    ? ""
+                    : `
+                      <div class="batas"></div>
+                      <div class="underline"></div>
+                      <div class="batas"></div>
+                      <div class="batas"></div>
+                      <div class="info-row">
+                        <div class="info">DP :</div>
+                        <div class="info-row-format">
+                          <div class="info">Rp.</div>
+                          <div class="info">${formatHarga(order.dp)}</div>
+                        </div>
+                      </div>
+                      <div class="info-row">
+                        <div class="info">Sisa :</div>
+                        <div class="info-row-format">
+                          <div class="info">Rp.</div>
+                          <div class="info">${formatHarga(order.sisa)}</div>
+                        </div>
+                      </div>
+                    `
+                }
             </div>
 
             <div class="batas"></div>
             <div class="underline"></div>
             <div class="batas"></div>
-
-            <div class="info-row">
-              <div class="info">DP - ${
-                order.bank === "CASH" ? order.bank : `${order.bank}`
-              } :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
-                <div class="info">${formatHarga(order.dp)}</div>
-              </div>
-            </div>
-            ${
-              order.sisa !== 0
-                ? `
-              <div class="info-row">
-                <div class="info">Sisa Pembayaran :</div>
-                <div class="info-row-format">
-                  <div class="info">Rp.</div>
-                  <div class="info">${formatHarga(order.sisa)}</div>
-                </div>
-              </div>
-            `
-                : ""
-            }
+            <div class="batas"></div>
             
-
-            <div class="info-row">
-              <div class="info">Pembayaran ${
-                order.banklunas === "CASH" ? order.banklunas : order.banklunas
-              } :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
-                <div class="info">${formatHarga(order.pay)}</div>
-              </div>
-            </div>          
-            <div class="info-row">
-              <div class="info">Kembalian :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
+            <div class="info">
                 <div class="info">
-                  ${formatHarga(
-                    order.pay - (order.sisa === 0 ? order.price : order.sisa)
-                  )}
+                  BANK BCA
                 </div>
-              </div>
-            </div>
-          </div>
+                <div class="info" style="margin-top:5px;">
+                  No Rek : ${bank_bca}
+                </div>
+                <div class="info" style="padding-right:1px; margin-top:5px;">
+                  ${nama_bank_bca}
+                </div>  
+            </div>          
+            <div class="info" style="margin-top:10px;">
+                <div class="info">
+                  BANK MANDIRI
+                </div>
+                <div class="info" style="margin-top:5px;">
+                  No Rek : ${bank_mandiri} 
+                </div>
+                <div class="info" style="padding-right:1px; margin-top:5px;">
+                  ${nama_bank_mandiri}
+                </div>  
+            </div>  
 
           <div class="batas"></div>
           <div class="underline"></div>
@@ -305,4 +309,4 @@ const strukPemesananAmpel = async (order) => {
     `;
 };
 
-module.exports = { strukPemesananAmpel };
+module.exports = { notaBandungKota };

@@ -109,6 +109,9 @@ const notaBsd = async (order) => {
               margin-top: 10px;
               margin-bottom: 10px;
             }
+            .info-catatan {
+              margin-bottom:10px;
+            }
           </style>
         </head>
         <body>
@@ -192,6 +195,9 @@ const notaBsd = async (order) => {
                           )}
                         </div>  
                       </div>
+                        <div class="info-catatan">
+                        ${item.catatan && `Note: ${item.catatan}`}
+                      </div>
                     `
                   )
                   .join("")}
@@ -208,15 +214,6 @@ const notaBsd = async (order) => {
               </div>
             </div>
             
-            <div class="info-row">
-              <div class="info">Pajak :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
-                <div class="info">${formatHarga(
-                  order.normalprice * (order.pajak / 100)
-                )}</div>
-              </div>
-            </div>
             <div class="info-row">
               <div class="info">Biaya Ongkir :</div>
               <div class="info-row-format">
@@ -270,10 +267,19 @@ const notaBsd = async (order) => {
                     BANK BCA
                 </div>
                 <div class="info" style="margin-top:5px;">
-                    No Rek : 8840999565
+                    No Rek : 8841-007-905
                 </div>
                 <div class="info" style="padding-right:1px; margin-top:5px;">
-                    A.N : CV. Makanan Segala Acara
+                    A.N : CV. Makanan Segala Acara BSD
+                </div>  
+                <div class="info">
+                    BANK MANDIRI
+                </div>
+                <div class="info" style="margin-top:5px;">
+                    No Rek : 155-00-1417-0719
+                </div>
+                <div class="info" style="padding-right:1px; margin-top:5px;">
+                    A.N : CV. Makanan Segala Acara BSD
                 </div>  
             </div>                      
 

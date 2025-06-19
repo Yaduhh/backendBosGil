@@ -101,6 +101,8 @@ const strukPemesananMap = {
 router.post("/generate-reservasi", async (req, res) => {
   const { order } = req.body;
   const branch = getBranchFromHeader(req);
+  console.log('Headers:', req.headers);
+  console.log('Detected branch:', branch);
   try {
     let htmlReceipt;
     if (order.status === 2) {
@@ -119,6 +121,8 @@ router.post("/generate-reservasi", async (req, res) => {
 router.post("/generate-pemesanan", async (req, res) => {
   const { order } = req.body;
   const branch = getBranchFromHeader(req);
+  console.log('Headers:', req.headers);
+  console.log('Detected branch:', branch);
   try {
     let htmlReceipt;
     if (order.status === 2) {

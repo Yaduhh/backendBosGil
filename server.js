@@ -308,7 +308,7 @@ app.use("/delete", deleteMenuRouter);
 app.use("/edit", editProdukRouter);
 
 // Login & register
-app.use("/register", registerRouter);
+app.post("/register", akunController.registerAccount);
 app.use("/login", loginRouter);
 app.use("/", editUserRouter);
 

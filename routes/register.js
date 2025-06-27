@@ -23,9 +23,10 @@ router.post("/", (req, res) => {
           .status(400)
           .json({ success: false, message: "Username sudah terdaftar" });
       }
+      
       const currentDate = new Date();
       const sql =
-        "INSERT INTO users (name, username, password, role, gender, birthday, createdAt, status, branch) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        "INSERT INTO users (name, username, password, role, gender, birthday, createdAt, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
       req.db.query(
         sql,
         [
@@ -36,8 +37,7 @@ router.post("/", (req, res) => {
           gender,
           birthday,
           currentDate,
-          status,
-          req.branch
+          status
         ],
         (err, result) => {
           if (err) {

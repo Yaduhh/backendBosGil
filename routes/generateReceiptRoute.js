@@ -53,7 +53,6 @@ const { notaReservasiBintaro } = require("../controllers/nota/reservasi/notaRese
 const { strukReservasiBintaro } = require("../controllers/struk/reservasi/strukReservasiBintaro");
 const { strukPemesananBintaro} = require("../controllers/struk/pemesanan/strukPemesananBintaro");
 
-
 const router = express.Router();
 // Utility to get branch from header
 const getBranchFromHeader = (req) => {
@@ -66,6 +65,7 @@ const notaReservasiMap = {
   condet: notaReservasiCondet,
   karawaci: notaReservasiKarawaci,
   bsd: notaReservasiBsd,
+  bsdwaiters: notaReservasiBsd,
   bandungkota: notaReservasiBandungKota,
   bandungbuahbatu: notaReservasiBandungBuahBatu,
   pagesangan: notaReservasiPagesangan,
@@ -77,6 +77,7 @@ const strukReservasiMap = {
   condet: strukReservasiCondet,
   karawaci: strukReservasiKarawaci,
   bsd: strukReservasiBsd,
+  bsdwaiters: strukReservasiBsd,
   bandungkota: strukReservasiBandungKota,
   bandungbuahbatu: strukReservasiBandungBuahBatu,
   pagesangan: strukReservasiPagesangan,
@@ -88,6 +89,7 @@ const notaPemesananMap = {
   condet: notaCondet,
   karawaci: notaKarawaci,
   bsd: notaBsd,
+  bsdwaiters: notaBsd,
   bandungkota: notaBandungKota,
   bandungbuahbatu: notaBandungBuahBatu,
   pagesangan: notaPagesangan,
@@ -99,6 +101,7 @@ const strukPemesananMap = {
   condet: strukPemesananCondet,
   karawaci: strukPemesananKarawaci,
   bsd: strukPemesananBsd,
+  bsdwaiters: strukPemesananBsd,
   bandungkota: strukPemesananBandungKota,
   bandungbuahbatu: strukPemesananBandungBuahBatu,
   pagesangan: strukPemesananPagesangan,

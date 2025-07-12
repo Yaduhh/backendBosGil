@@ -72,6 +72,13 @@ const dbConfigs = {
     password: "",
     database: "bosgil_bsdwaiters",
     connectionLimit: 10
+  },
+  bintarowaiters: {
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "bosgil_bintarowaiters",
+    connectionLimit: 10
   }
 };
 

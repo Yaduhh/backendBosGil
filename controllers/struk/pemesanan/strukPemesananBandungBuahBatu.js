@@ -186,6 +186,7 @@ const strukPemesananBandungBuahBatu = async (order) => {
             </div>
               <div class="info">
                 ${parsedPesanan
+                  .filter(item => !item.namaAqiqah) // Filter out aqiqah data from menu display
                   .map(
                     (item) => `
                       <div class="info">
@@ -210,11 +211,25 @@ const strukPemesananBandungBuahBatu = async (order) => {
                     `
                   )
                   .join("")}
-              </div>       
-            <div class="batas"></div>
-            <div class="underline"></div>
-            <div class="batas"></div>
+              </div>
 
+              ${parsedPesanan.some(item => item.namaAqiqah) ? `
+              <div class="batas"></div>
+              <div class="underline"></div>
+              <div class="batas"></div>
+              
+              <div class="info" style="color: #B91C1C; font-weight: bold; text-align: center;">📋 DATA AQIQAH</div>
+              
+              <div class="info">
+                <div class="info">Nama yang di aqiqah: ${parsedPesanan.find(item => item.namaAqiqah)?.namaAqiqah || '-'}</div>
+                <div class="info">Jenis Kelamin: ${parsedPesanan.find(item => item.namaAqiqah)?.jenisKelamin || '-'}</div>
+                <div class="info">Nama Ayah: ${parsedPesanan.find(item => item.namaAqiqah)?.namaAyah || '-'}</div>
+                <div class="info">Nama Ibu: ${parsedPesanan.find(item => item.namaAqiqah)?.namaIbu || '-'}</div>
+                <div class="info">Anak ke: ${parsedPesanan.find(item => item.namaAqiqah)?.anakKe || '-'}</div>
+                <div class="info">Tempat & Tanggal Lahir: ${parsedPesanan.find(item => item.namaAqiqah)?.tempatTanggalLahir || '-'}</div>
+              </div>
+              ` : ''}
+        <div class="batas"></div>
             <div class="info-row">
               <div class="info">Sub Total :</div>
               <div class="info-row-format">

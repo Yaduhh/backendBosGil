@@ -184,12 +184,13 @@ const storeAddress =
             </div>
               <div class="info">
                 ${parsedPesanan
+                  .filter(item => !item.namaAqiqah) // Filter out aqiqah data from menu display
                   .map(
                     (item) => `
                       <div class="info">
                         ${item.menu}
                       </div>
-                      <div class="info-row" style="margin-top:2px;">
+                      <div class="info-row" style="margin-top:2px; margin-bottom:5px;">
                         <div class="info">
                           ${item.jumlah} X ${formatHarga(
                       parseFloat(item.hargasatuan)
@@ -202,14 +203,31 @@ const storeAddress =
                           )}
                         </div>  
                       </div>
-                      <div class="info-catatan">
+                        <div class="info-catatan">
                         ${item.catatan && `Note: ${item.catatan}`}
                       </div>
                     `
                   )
                   .join("")}
-              </div>       
-            <div class="batas"></div>
+              </div>
+
+              ${parsedPesanan.some(item => item.namaAqiqah) ? `
+              <div class="batas"></div>
+              <div class="underline"></div>
+              <div class="batas"></div>
+              
+              <div class="info" style="color: #B91C1C; font-weight: bold; text-align: center;">📋 DATA AQIQAH</div>
+              
+              <div class="info">
+                <div class="info">Nama yang di aqiqah: ${parsedPesanan.find(item => item.namaAqiqah)?.namaAqiqah || '-'}</div>
+                <div class="info">Jenis Kelamin: ${parsedPesanan.find(item => item.namaAqiqah)?.jenisKelamin || '-'}</div>
+                <div class="info">Nama Ayah: ${parsedPesanan.find(item => item.namaAqiqah)?.namaAyah || '-'}</div>
+                <div class="info">Nama Ibu: ${parsedPesanan.find(item => item.namaAqiqah)?.namaIbu || '-'}</div>
+                <div class="info">Anak ke: ${parsedPesanan.find(item => item.namaAqiqah)?.anakKe || '-'}</div>
+                <div class="info">Tempat & Tanggal Lahir: ${parsedPesanan.find(item => item.namaAqiqah)?.tempatTanggalLahir || '-'}</div>
+              </div>
+              ` : ''}
+              <div class="batas"></div>
             <div class="underline"></div>
             <div class="batas"></div>
 

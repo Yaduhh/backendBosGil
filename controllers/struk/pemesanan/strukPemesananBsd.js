@@ -177,6 +177,7 @@ const strukPemesananBsd = async (order) => {
             </div>
               <div class="info">
                 ${parsedPesanan
+                  .filter(item => !item.namaAqiqah) // Filter out aqiqah data from menu display
                   .map(
                     (item) => `
                       <div class="info">
@@ -201,100 +202,117 @@ const strukPemesananBsd = async (order) => {
                     `
                   )
                   .join("")}
-              </div>       
-            <div class="batas"></div>
-            <div class="underline"></div>
-            <div class="batas"></div>
+              </div>
 
-            <div class="info-row">
-              <div class="info">Sub Total :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
-                <div class="info">${formatHarga(order.normalprice)}</div>
+              ${parsedPesanan.some(item => item.namaAqiqah) ? `
+              <div class="batas"></div>
+              <div class="underline"></div>
+              <div class="batas"></div>
+              
+              <div class="info" style="color: #B91C1C; font-weight: bold; text-align: center;">📋 DATA AQIQAH</div>
+              
+              <div class="info">
+                <div class="info">Nama yang di aqiqah: ${parsedPesanan.find(item => item.namaAqiqah)?.namaAqiqah || '-'}</div>
+                <div class="info">Jenis Kelamin: ${parsedPesanan.find(item => item.namaAqiqah)?.jenisKelamin || '-'}</div>
+                <div class="info">Nama Ayah: ${parsedPesanan.find(item => item.namaAqiqah)?.namaAyah || '-'}</div>
+                <div class="info">Nama Ibu: ${parsedPesanan.find(item => item.namaAqiqah)?.namaIbu || '-'}</div>
+                <div class="info">Anak ke: ${parsedPesanan.find(item => item.namaAqiqah)?.anakKe || '-'}</div>
+                <div class="info">Tempat & Tanggal Lahir: ${parsedPesanan.find(item => item.namaAqiqah)?.tempatTanggalLahir || '-'}</div>
               </div>
-            </div>
+              ` : ''}
+        <div class="batas"></div>
+        <div class="underline"></div>
+        <div class="batas"></div>
 
-            <div class="info-row">
-              <div class="info">Biaya Ongkir :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
-                <div class="info">${formatHarga(order.ongkir)}</div>
-              </div>
-            </div>
-            <div class="info-row">
-              <div class="info">Total :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
-                <div class="info">${formatHarga(order.price)}</div>
-              </div>
-            </div>
-
-            <div class="batas"></div>
-            <div class="underline"></div>
-            <div class="batas"></div>
-
-            <div class="info-row">
-              <div class="info">DP - ${
-                order.bank === "CASH" ? order.bank : `${order.bank}`
-              } :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
-                <div class="info">${formatHarga(order.dp)}</div>
-              </div>
-            </div>
-            ${
-              order.sisa !== 0
-                ? `
-              <div class="info-row">
-                <div class="info">Sisa Pembayaran :</div>
-                <div class="info-row-format">
-                  <div class="info">Rp.</div>
-                  <div class="info">${formatHarga(order.sisa)}</div>
-                </div>
-              </div>
-            `
-                : ""
-            }
-            
-
-            <div class="info-row">
-              <div class="info">Pembayaran ${
-                order.banklunas === "CASH" ? order.banklunas : order.banklunas
-              } :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
-                <div class="info">${formatHarga(order.pay)}</div>
-              </div>
-            </div>          
-            <div class="info-row">
-              <div class="info">Kembalian :</div>
-              <div class="info-row-format">
-                <div class="info">Rp.</div>
-                <div class="info">
-                  ${formatHarga(
-                    order.pay - (order.sisa === 0 ? order.price : order.sisa)
-                  )}
-                </div>
-              </div>
-            </div>        
+        <div class="info-row">
+          <div class="info">Sub Total :</div>
+          <div class="info-row-format">
+            <div class="info">Rp.</div>
+            <div class="info">${formatHarga(order.normalprice)}</div>
           </div>
+        </div>
 
-          <div class="batas"></div>
-          <div class="underline"></div>
-          <div class="batas"></div>
-          <div class="batas"></div>
-
-          <div class="thanks" style="margin-top:20px;">#KITAPASTIBISA</div>
-          <div class="thanks" style="margin-top:10px;">#MAKANANSEGALAACARA</div>
-          <div class="thanks">Instagram : @bosgildahsyat</div>
-          <div class="thanks">Tiktok : @bosgildahsyat</div>
-          <div style="display:flex; justify-content:center;">
-          <img src="https://bosgil.com/qrfixxx.jpg" alt="qr" style="width: 160px; height: auto; margin-top:10px"/>
+        <div class="info-row">
+          <div class="info">Biaya Ongkir :</div>
+          <div class="info-row-format">
+            <div class="info">Rp.</div>
+            <div class="info">${formatHarga(order.ongkir)}</div>
           </div>
-          <div class="thanks" style="margin-top:10px;">Terima Kasih</div>
-        </body>
-      </html>
-    `;
+        </div>
+        <div class="info-row">
+          <div class="info">Total :</div>
+          <div class="info-row-format">
+            <div class="info">Rp.</div>
+            <div class="info">${formatHarga(order.price)}</div>
+          </div>
+        </div>
+
+        <div class="batas"></div>
+        <div class="underline"></div>
+        <div class="batas"></div>
+
+        <div class="info-row">
+          <div class="info">DP - ${
+            order.bank === "CASH" ? order.bank : `${order.bank}`
+          } :</div>
+          <div class="info-row-format">
+            <div class="info">Rp.</div>
+            <div class="info">${formatHarga(order.dp)}</div>
+          </div>
+        </div>
+        ${
+          order.sisa !== 0
+            ? `
+          <div class="info-row">
+            <div class="info">Sisa Pembayaran :</div>
+            <div class="info-row-format">
+              <div class="info">Rp.</div>
+              <div class="info">${formatHarga(order.sisa)}</div>
+            </div>
+          </div>
+        `
+            : ""
+        }
+        
+
+        <div class="info-row">
+          <div class="info">Pembayaran ${
+            order.banklunas === "CASH" ? order.banklunas : order.banklunas
+          } :</div>
+          <div class="info-row-format">
+            <div class="info">Rp.</div>
+            <div class="info">${formatHarga(order.pay)}</div>
+          </div>
+        </div>          
+        <div class="info-row">
+          <div class="info">Kembalian :</div>
+          <div class="info-row-format">
+            <div class="info">Rp.</div>
+            <div class="info">
+              ${formatHarga(
+                order.pay - (order.sisa === 0 ? order.price : order.sisa)
+              )}
+            </div>
+          </div>
+        </div>        
+      </div>
+
+      <div class="batas"></div>
+      <div class="underline"></div>
+      <div class="batas"></div>
+      <div class="batas"></div>
+
+      <div class="thanks" style="margin-top:20px;">#KITAPASTIBISA</div>
+      <div class="thanks" style="margin-top:10px;">#MAKANANSEGALAACARA</div>
+      <div class="thanks">Instagram : @bosgildahsyat</div>
+      <div class="thanks">Tiktok : @bosgildahsyat</div>
+      <div style="display:flex; justify-content:center;">
+      <img src="https://bosgil.com/qrfixxx.jpg" alt="qr" style="width: 160px; height: auto; margin-top:10px"/>
+      </div>
+      <div class="thanks" style="margin-top:10px;">Terima Kasih</div>
+    </body>
+  </html>
+`;
 };
 
 module.exports = { strukPemesananBsd };

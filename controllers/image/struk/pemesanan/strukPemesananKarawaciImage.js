@@ -1,17 +1,27 @@
 const { formatTanggal, formatTime, formatDateStruk, formatHarga } = require('../../../../utils/formatUtils');
 
+/**
+ * Menyesuaikan dan memformat waktu.
+ * @param {string} timeDeliver - Waktu dalam format "HH:mm".
+ * @returns {string} Waktu yang telah diformat.
+ */
 const adjustTimeDeliver = (timeDeliver) => {
+  if (!timeDeliver || !timeDeliver.includes(":")) return ""; // Menangani input yang tidak valid
   const [hours, minutes] = timeDeliver.split(":").map(Number);
   const date = new Date();
-  date.setHours(hours);
-  date.setMinutes(minutes - 0);
+  date.setHours(hours, minutes);
 
-  // Handle cases where minutes become negative and adjust accordingly
   const adjustedHours = date.getHours().toString().padStart(2, "0");
   const adjustedMinutes = date.getMinutes().toString().padStart(2, "0");
 
   return `${adjustedHours}:${adjustedMinutes}`;
 };
+
+/**
+ * Menghasilkan markup HTML untuk gambar struk pemesanan dengan desain yang modern dan profesional.
+ * @param {object} order - Objek yang berisi detail pesanan.
+ * @returns {string} String HTML untuk struk.
+ */
 
 const strukPemesananKarawaciImage = async (order) => {
   const outlet = "NASI MANDHI BOSGIL KARAWACI";
@@ -21,116 +31,317 @@ const strukPemesananKarawaciImage = async (order) => {
   const parsedPesanan = JSON.parse(order.pesanan);
 
   return `
-    <div class="receipt-container">
-      <div class="header">
-        <div class="logo-section">
-          <div class="logo">🍜</div>
-          <div class="brand-info">
-            <h1 class="brand-name">BOS GIL</h1>
-            <p class="tagline">Warung Mie Ayam & Bakso</p>
-          </div>
-        </div>
-        <div class="receipt-info">
-          <h2 class="receipt-title">STRUK PEMESANAN</h2>
-          <p class="receipt-number">No: ${order.id}</p>
-          <p class="receipt-date">${formatDateStruk(order.created_at)}</p>
-        </div>
-      </div>
+    <!DOCTYPE html>
+    <html lang="id">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+      <title>Struk Pemesanan</title>
+      <style>
+        /* --- Reset & Basic Styling --- */
+        body {
+          margin: 0;
+          font-family: 'Inter', sans-serif;
+          background-color: #F9FAFB;
+          color: #1F2937;
+          font-size: 14px;
+          line-height: 1.6;
+        }
 
-      <div class="customer-info">
-        <div class="info-row">
-          <span class="label">Outlet:</span>
-          <span class="value">${outlet}</span>
-        </div>
-        <div class="info-row">
-          <span class="label">Alamat:</span>
-          <span class="value">${storeAddress}</span>
-        </div>
-        <div class="info-row">
-          <span class="label">Telp:</span>
-          <span class="value">${phoneNumber} / ${phoneNumber1}</span>
-        </div>
-        <div class="info-row">
-          <span class="label">Nama:</span>
-          <span class="value">${order.nama || '-'}</span>
-        </div>
-        <div class="info-row">
-          <span class="label">No. HP:</span>
-          <span class="value">${order.no_hp || '-'}</span>
-        </div>
-        <div class="info-row">
-          <span class="label">Alamat:</span>
-          <span class="value">${order.alamat || '-'}</span>
-        </div>
-        <div class="info-row">
-          <span class="label">Tanggal:</span>
-          <span class="value">${formatTanggal(order.created_at)}</span>
-        </div>
-        <div class="info-row">
-          <span class="label">Jam:</span>
-          <span class="value">${formatTime(order.created_at)}</span>
-        </div>
-        ${order.time_deliver ? `
-          <div class="info-row">
-            <span class="label">Jam Kirim:</span>
-            <span class="value">${adjustTimeDeliver(order.time_deliver)}</span>
-          </div>
-        ` : ''}
-      </div>
+        /* --- Container Utama --- */
+        .receipt-container {
+          max-width: 420px;
+          margin: 0 auto;
+          padding: 24px;
+          background-color: #FFFFFF;
+          box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
 
-      <div class="order-details">
-        <h3 class="section-title">Detail Pesanan</h3>
-        <div class="items-list">
-          ${parsedPesanan.map(item => `
-            <div class="item-row">
-              <div class="item-info">
-                <span class="item-name">${item.nama}</span>
-                <span class="item-notes">${item.catatan ? `(${item.catatan})` : ''}</span>
+        /* --- Header --- */
+        .header {
+          text-align: center;
+          padding-bottom: 20px;
+        }
+        .header img {
+          width: 200px;
+          height: auto;
+          margin-bottom: 12px;
+        }
+        .header .outlet-name {
+          font-size: 18px;
+          font-weight: 600;
+          color: #1F2937;
+        }
+        .header .address, .header .phone {
+          font-size: 13px;
+          color: #4B5563;
+          margin-top: 4px;
+        }
+
+        /* --- Separator / Garis Pemisah --- */
+        .separator {
+          border: 0;
+          border-top: 1px dashed #D1D5DB;
+          margin: 20px 0;
+        }
+
+        /* --- Section Styling --- */
+        .section-title {
+          font-weight: 600;
+          font-size: 16px;
+          margin-bottom: 12px;
+          color: #374151;
+        }
+        .info-grid {
+          display: grid;
+          grid-template-columns: 120px 1fr;
+          gap: 8px;
+        }
+        .info-grid .label {
+          color: #4B5563;
+        }
+        .info-grid .value {
+          font-weight: 500;
+          word-break: break-word;
+        }
+        .info-grid .value.highlight {
+          font-weight: 700;
+          color: #1F2937;
+        }
+
+        /* --- Order Items --- */
+        .order-items .item {
+          display: grid;
+          grid-template-columns: 1fr auto;
+          gap: 4px;
+          margin-bottom: 12px;
+        }
+        .order-items .item-details {
+          grid-column: 1 / -1;
+        }
+        .order-items .item-name {
+          font-weight: 600;
+        }
+        .order-items .item-qty-price {
+          font-size: 13px;
+          color: #4B5563;
+        }
+        .order-items .item-total {
+          font-weight: 600;
+          text-align: right;
+          align-self: end;
+        }
+        .order-items .item-note {
+          grid-column: 1 / -1;
+          font-size: 12px;
+          color: #6B7280;
+          font-style: italic;
+          padding-left: 12px;
+          border-left: 2px solid #E5E7EB;
+        }
+
+        /* --- Totals Section --- */
+        .totals-section .total-row {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 6px;
+          font-size: 15px;
+        }
+        .totals-section .grand-total {
+          font-size: 18px;
+          font-weight: 700;
+          color: #B91C1C;
+          padding-top: 10px;
+          margin-top: 10px;
+          border-top: 2px solid #1F2937;
+        }
+
+        /* --- Footer --- */
+        .footer {
+          text-align: center;
+          padding-top: 20px;
+        }
+        .footer .hashtags {
+          font-weight: 500;
+          color: #4B5563;
+          margin-top: 20px;
+        }
+        .footer .qr-code {
+          width: 140px;
+          height: auto;
+          margin: 16px 0;
+        }
+        .footer .thank-you {
+          font-size: 16px;
+          font-weight: 600;
+          color: #374151;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="receipt-container">
+
+        <!-- Header -->
+        <header class="header">
+          <img src="https://bosgil.com/logo.jpeg" alt="Logo Bosgil">
+          <div class="outlet-name">${outlet}</div>
+          <div class="address">${storeAddress}</div>
+          <div class="phone">Admin 1: ${phoneNumber} | Admin 2: ${phoneNumber1}</div>
+        </header>
+
+        <hr class="separator">
+
+        <!-- Detail Transaksi -->
+        <section>
+          <div class="info-grid">
+            <div class="label">No. TRX</div>
+            <div class="value">${order.id}${formatDateStruk(order.date)}</div>
+            <div class="label">Tanggal Dibuat</div>
+            <div class="value">${formatTanggal(order.date)} @ ${formatTime(
+    order.date
+  )}</div>
+            <div class="label">Kasir</div>
+            <div class="value">${order.cashier_name}</div>
+          </div>
+        </section>
+
+        <hr class="separator">
+
+        <!-- Detail Pelanggan & Pengiriman -->
+        <section>
+          <div class="section-title">Informasi Pesanan</div>
+          <div class="info-grid">
+            <div class="label">Nama Customer</div>
+            <div class="value highlight">${order.name}</div>
+            <div class="label">No. Telepon</div>
+            <div class="value highlight">0${
+              String(order.nophone).startsWith("62")
+                ? String(order.nophone).slice(2)
+                : order.nophone
+            }</div>
+            <div class="label">Alamat</div>
+            <div class="value">${order.alamat}</div>
+            <div class="label">Pesanan Untuk</div>
+            <div class="value">${formatTanggal(order.orderanBuat)}</div>
+            <div class="label">${
+              order.pengambilan === "diambil"
+                ? `Diambil Pukul`
+                : `Dikirim Pukul`
+            }</div>
+            <div class="value">${adjustTimeDeliver(order.timeDeliver)}</div>
+            <div class="label">Pengiriman</div>
+            <div class="value" style="text-transform:capitalize;">${
+              order.pengambilan
+            }${order.kurir ? ` via ${order.kurir}` : ""}</div>
+            ${
+              order.noted
+                ? `
+              <div class="label">Catatan</div>
+              <div class="value">${order.noted}</div>
+            `
+                : ""
+            }
+          </div>
+        </section>
+        
+        <hr class="separator">
+
+        <!-- Rincian Pesanan -->
+        <section class="order-items">
+          <div class="section-title">Rincian Item</div>
+          ${parsedPesanan
+            .map(
+              (item) => `
+            <div class="item">
+              <div class="item-details">
+                <div class="item-name">${item.menu}</div>
+                <div class="item-qty-price">${item.jumlah} x ${formatHarga(
+                parseFloat(item.hargasatuan)
+              )}</div>
               </div>
-              <div class="item-quantity">${item.jumlah}x</div>
-              <div class="item-price">${formatHarga(item.harga)}</div>
+              <div class="item-total">Rp ${formatHarga(
+                parseFloat(item.hargasatuan) * item.jumlah
+              )}</div>
+              ${
+                item.catatan
+                  ? `<div class="item-note">Note: ${item.catatan}</div>`
+                  : ""
+              }
             </div>
-          `).join('')}
-        </div>
-      </div>
+          `
+            )
+            .join("")}
+        </section>
 
-      <div class="total-section">
-        <div class="total-row">
-          <span class="label">Subtotal:</span>
-          <span class="value">${formatHarga(order.total_harga)}</span>
-        </div>
-        ${order.ongkir > 0 ? `
+        <hr class="separator">
+
+        <!-- Rincian Total -->
+        <section class="totals-section">
           <div class="total-row">
-            <span class="label">Ongkir:</span>
-            <span class="value">${formatHarga(order.ongkir)}</span>
+            <div class="label">Subtotal</div>
+            <div class="value">Rp ${formatHarga(order.normalprice)}</div>
           </div>
-        ` : ''}
-        <div class="total-row final">
-          <span class="label">Total:</span>
-          <span class="value">${formatHarga(order.total_harga + order.ongkir)}</span>
-        </div>
-      </div>
+          <div class="total-row">
+            <div class="label">Biaya Ongkir</div>
+            <div class="value">Rp ${formatHarga(order.ongkir)}</div>
+          </div>
+          <div class="total-row grand-total">
+            <div class="label">TOTAL</div>
+            <div class="value">Rp ${formatHarga(order.price)}</div>
+          </div>
+          
+          ${
+            order.dp > 0
+              ? `
+            <div class="total-row" style="margin-top: 16px;">
+              <div class="label">DP (${order.bank})</div>
+              <div class="value">- Rp ${formatHarga(order.dp)}</div>
+            </div>
+          `
+              : ""
+          }
+          
+          ${
+            order.sisa !== 0
+              ? `
+            <div class="total-row" style="font-weight: 700;">
+              <div class="label">Sisa Bayar</div>
+              <div class="value">Rp ${formatHarga(order.sisa)}</div>
+            </div>
+          `
+              : ""
+          }
 
-      <div class="payment-info">
-        <div class="info-row">
-          <span class="label">Metode Pembayaran:</span>
-          <span class="value">${order.metode_pembayaran || 'Tunai'}</span>
-        </div>
-        <div class="info-row">
-          <span class="label">Status:</span>
-          <span class="value status-${order.status}">${order.status === 1 ? 'Menunggu Pembayaran' : order.status === 2 ? 'Sudah Dibayar' : 'Selesai'}</span>
-        </div>
-      </div>
+          <div class="total-row" style="margin-top: 16px;">
+            <div class="label">Pembayaran (${order.banklunas || "CASH"})</div>
+            <div class="value">Rp ${formatHarga(order.pay)}</div>
+          </div>
+          <div class="total-row">
+            <div class="label">Kembalian</div>
+            <div class="value">Rp ${formatHarga(
+              order.pay - (order.sisa === 0 ? order.price : order.sisa)
+            )}</div>
+          </div>
+        </section>
 
-      <div class="footer">
-        <p class="thank-you">Terima Kasih Atas Kunjungan Anda</p>
-        <p class="footer-text">Semoga hidangan kami sesuai dengan selera Anda</p>
-        <div class="qr-section">
-          <div class="qr-placeholder">📱</div>
-          <p class="qr-text">Scan untuk feedback</p>
-        </div>
+        <!-- Footer -->
+        <footer class="footer">
+          <hr class="separator">
+          <div class="hashtags">
+            #KITAPASTIBISA #MAKANANSEGALAACARA
+            <br>
+            IG & TikTok: @bosgildahsyat
+          </div>
+          <img src="https://bosgil.com/qrfixxx.jpg" alt="QR Code" class="qr-code">
+          <div class="thank-you">Terima Kasih!</div>
+        </footer>
+
       </div>
-    </div>
+    </body>
+    </html>
   `;
 };
 

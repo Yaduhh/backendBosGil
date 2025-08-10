@@ -1,5 +1,4 @@
 const express = require("express");
-const { convertHtmlToImage } = require("../utils/htmlToImage");
 
 // Image controllers - Nota Pemesanan
 const { notaCondetImage } = require("../controllers/image/nota/pemesanan/notaCondetImage");
@@ -410,12 +409,12 @@ router.post("/generate-reservasi-image", async (req, res) => {
       }
     }
     
-    // Convert HTML to image
-    const imageBuffer = await convertHtmlToImage(htmlReceipt);
-    
-    res.setHeader('Content-Type', 'image/jpeg');
-    res.setHeader('Content-Disposition', 'attachment; filename="struk-reservasi.jpg"');
-    res.send(imageBuffer);
+    // Return HTML string instead of image for frontend processing
+    res.json({ 
+      success: true, 
+      htmlReceipt,
+      message: "HTML struk berhasil dihasilkan" 
+    });
   } catch (error) {
     console.error("Error in /generate-reservasi-image:", error.stack || error);
     res
@@ -466,17 +465,44 @@ router.post("/generate-pemesanan-image", async (req, res) => {
       }
     }
     
-    // Convert HTML to image
-    const imageBuffer = await convertHtmlToImage(htmlReceipt);
-    
-    res.setHeader('Content-Type', 'image/jpeg');
-    res.setHeader('Content-Disposition', 'attachment; filename="struk-pemesanan.jpg"');
-    res.send(imageBuffer);
+    // Return HTML string instead of image for frontend processing
+    res.json({ 
+      success: true, 
+      htmlReceipt,
+      message: "HTML struk berhasil dihasilkan" 
+    });
   } catch (error) {
     console.error("Error in /generate-pemesanan-image:", error.stack || error);
     res
       .status(500)
       .json({ success: false, message: "Gagal menghasilkan struk image" });
+  }
+});
+
+// Route untuk convert HTML ke image (deprecated - processing moved to frontend)
+router.post("/convert-html-to-image", async (req, res) => {
+  try {
+    const { html } = req.body;
+    
+    if (!html) {
+      return res.status(400).json({
+        success: false,
+        message: "HTML content is required"
+      });
+    }
+
+    // Return HTML for frontend processing instead of server-side image conversion
+    res.json({ 
+      success: true, 
+      htmlReceipt: html,
+      message: "HTML berhasil diterima, silakan proses di frontend" 
+    });
+  } catch (error) {
+    console.error("Error in /convert-html-to-image:", error.stack || error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Gagal memproses HTML" 
+    });
   }
 });
 

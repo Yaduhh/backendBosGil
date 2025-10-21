@@ -462,7 +462,7 @@ exports.updateOrderPesanan = (req, res) => {
   const correctedOrderanBuat = new Date(orderanBuat);
   correctedOrderanBuat.setHours(correctedOrderanBuat.getHours());
 
-  const selectQuery = `SELECT dp, status FROM orders WHERE id = ?`;
+  const selectQuery = `SELECT dp, pay, status FROM orders WHERE id = ?`;
 
   req.db.query(selectQuery, [id], (err, results) => {
     if (err) {
@@ -480,16 +480,21 @@ exports.updateOrderPesanan = (req, res) => {
       });
     }
 
-    const dp = results[0].dp;
+    // Jika ada nilai pay, pindahkan ke dp
+    let dp = results[0].dp || 0;
+    const existingPay = results[0].pay;
+    
+    if (existingPay && existingPay > 0) {
+      dp = existingPay;
+    }
+
     let status = results[0].status;
-    let progress = 1;
+    let progress = 0;
 
     if (status === 2) {
       status = 1;
-      progress = 1;
     } else if (status === 1 ){
       status = 0;
-      progress = 0;
     }
 
     const sisa = price - dp;
@@ -509,8 +514,9 @@ exports.updateOrderPesanan = (req, res) => {
           pajak = ?, 
           pesanan = ?, 
           status = ?, 
+          dp = ?,
           sisa = ?,
-          pay = 0,
+          pay = NULL,
           progress = ?
       WHERE id = ?
     `;
@@ -530,6 +536,7 @@ exports.updateOrderPesanan = (req, res) => {
       parseFloat(pajak) || 0,
       JSON.stringify(pesanan),
       status,
+      dp,
       sisa,
       progress,
       id
@@ -582,10 +589,19 @@ exports.updateOrderPesananReservasi = (req, res) => {
     });
   }
 
+  // Pastikan jumlah_orang berupa number
+  const jumlahOrangNumber = parseInt(jumlah_orang);
+  if (isNaN(jumlahOrangNumber) || jumlahOrangNumber <= 0) {
+    return res.status(400).json({
+      success: false,
+      error: "Jumlah orang harus berupa angka yang valid"
+    });
+  }
+
   const correctedOrderanBuat = new Date(orderanBuat);
   correctedOrderanBuat.setHours(correctedOrderanBuat.getHours());
 
-  const selectQuery = `SELECT dp, status FROM orders WHERE id = ?`;
+  const selectQuery = `SELECT dp, pay, status FROM orders WHERE id = ?`;
 
   req.db.query(selectQuery, [id], (err, results) => {
     if (err) {
@@ -603,19 +619,30 @@ exports.updateOrderPesananReservasi = (req, res) => {
       });
     }
 
-    const dp = results[0].dp;
+    // Jika ada nilai pay, pindahkan ke dp
+    let dp = results[0].dp || 0;
+    const existingPay = results[0].pay;
+    
+    if (existingPay && existingPay > 0) {
+      dp = existingPay;
+    }
+
     let status = results[0].status;
+    let progress = 0;
 
     if (status === 2) {
       status = 1;
+    } else if (status === 1) {
+      status = 0;
     }
 
-    const sisa = dp ? price - dp : price;
+    const sisa = price - dp;
 
     const updateQuery = `
       UPDATE orders SET 
         normalprice = ?, 
         price = ?, 
+        dp = ?,
         sisa = ?,
         name = ?, 
         noted = ?,
@@ -628,16 +655,15 @@ exports.updateOrderPesananReservasi = (req, res) => {
         from_jam = ?,
         until_jam = ?,
         status_reservasi = 0,
-        dp = 0,
-        pay = 0,
-        sisa = 0,
-        status = 0,
-        progress = 0
+        status = ?,
+        pay = NULL,
+        progress = ?
       WHERE id = ?`;
 
     const values = [
       parseFloat(normalprice),
       parseFloat(price),
+      dp,
       sisa,
       nama,
       noted || null,
@@ -646,9 +672,11 @@ exports.updateOrderPesananReservasi = (req, res) => {
       parseFloat(pajak) || 0,
       JSON.stringify(pesanan),
       vip || null,
-      parseInt(jumlah_orang),
+      jumlahOrangNumber,
       from_jam,
       until_jam,
+      status,
+      progress,
       id
     ];
 

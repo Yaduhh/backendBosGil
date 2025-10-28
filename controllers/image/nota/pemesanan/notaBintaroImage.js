@@ -24,13 +24,12 @@ const adjustTimeDeliver = (timeDeliver) => {
 
 const notaBintaroImage = async (order) => {
   const outlet = "NASI MANDHI BOSGIL BINTARO";
-  const storeAddress = "Jl. RAYA BINTARO NO.5 RT.5/RW 6 BINTARO TANGERANG";
-  const phoneNumber = "08119058817";
-  const phoneNumber1 = "08119291531";
-  const bank_bca = "8840 999 298";
-  const nama_bank_bca = "CV. Makanan Segala Acara";
-  const bank_mandiri = "155 0013 888 980";
-  const nama_bank_mandiri = "CV. Makanan Segala Acara";
+  const storeAddress = "Jl. Camat Pd. Aren No.7, Pd. Pucung, Kec. Pd. Aren, Kota Tangerang Selatan.";
+  const phoneNumber = "0811-1201-2158";
+  const bank_bca = "8841 007 913";
+  const nama_bank_bca = "CV. Makanan Segala Acara Bintro";
+  const bank_mandiri = "1550014338944";
+  const nama_bank_mandiri = "CV. Makanan Segala Acara Bintaro";
   const parsedPesanan = JSON.parse(order.pesanan);
 
   return `
@@ -205,10 +204,10 @@ const notaBintaroImage = async (order) => {
 
         <!-- Header -->
         <header class="header">
-          <img src="https://bosgil.com/logo.jpeg" alt="Logo Bosgil">
+          <img src="https://bosgilakademi.com/logoBosgil.jpg" alt="Logo Bosgil">
           <div class="outlet-name">${outlet}</div>
           <div class="address">${storeAddress}</div>
-          <div class="phone">Admin 1: ${phoneNumber} | Admin 2: ${phoneNumber1}</div>
+          <div class="phone">Admin : ${phoneNumber}</div>
         </header>
 
         <hr class="separator">
@@ -380,7 +379,7 @@ const notaBintaroImage = async (order) => {
             IG & TikTok: @bosgildahsyat
           </div>
           
-          <img src="https://bosgil.com/qrfixxx.jpg" alt="QR Code Pembayaran" class="qr-code">
+          <img src="https://bosgilakademi.com/QR.jpg" alt="QR Code Pembayaran" class="qr-code">
           
           <div class="thank-you">Terima Kasih!</div>
         </footer>

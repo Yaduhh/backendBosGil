@@ -121,7 +121,7 @@ const notaBandungKota = async (order) => {
         </head>
         <body>
           <div class="header">
-            <img src="https://bosgil.com/logo.jpeg" alt="Logo" style="width: 260px; height: auto; margin-top:5px"/>
+            <img src="https://bosgilakademi.com/logoBosgil.jpg" alt="Logo" style="width: 260px; height: auto; margin-top:5px"/>
             <div class="title" style="margin-top:20px; font-weight:500;">${outlet}</div>
             <div class="title" style="margin-top:10px; font-weight:500;">${storeAddress}</div>
               <div class="info" style="margin-top:10px;">Admin: ${phoneNumber}</div>
@@ -319,7 +319,7 @@ const notaBandungKota = async (order) => {
           <div class="thanks">Instagram : @bosgildahsyat</div>
           <div class="thanks">Tiktok : @bosgildahsyat</div>
           <div style="display:flex; justify-content:center;">
-          <img src="https://bosgil.com/qrfixxx.jpg" alt="qr" style="width: 160px; height: auto; margin-top:10px"/>
+          <img src="https://bosgilakademi.com/QR.jpg" alt="qr" style="width: 160px; height: auto; margin-top:10px"/>
           </div>
           <div class="thanks" style="margin-top:10px;">Terima Kasih</div>
         </body>

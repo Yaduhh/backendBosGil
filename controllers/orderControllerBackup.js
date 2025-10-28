@@ -434,7 +434,6 @@ exports.deleteOrder = async (req, res) => {
   }
 };
 
-
 exports.updateOrderPesanan = (req, res) => {
   const { id } = req.params;
   const {
@@ -463,7 +462,7 @@ exports.updateOrderPesanan = (req, res) => {
   const correctedOrderanBuat = new Date(orderanBuat);
   correctedOrderanBuat.setHours(correctedOrderanBuat.getHours());
 
-  const selectQuery = `SELECT dp, pay, status FROM orders WHERE id = ?`;
+  const selectQuery = `SELECT dp, status FROM orders WHERE id = ?`;
 
   req.db.query(selectQuery, [id], (err, results) => {
     if (err) {
@@ -481,21 +480,19 @@ exports.updateOrderPesanan = (req, res) => {
       });
     }
 
-    // Jika ada nilai pay, pindahkan ke dp
-    let dp = results[0].dp || 0;
-    const existingPay = results[0].pay;
-    
-    if (existingPay && existingPay > 0) {
-      dp = existingPay;
-    }
-
+    const dp = results[0].dp;
     let status = results[0].status;
-    let progress = 0;
+    let progress = 1;
 
     if (status === 2) {
       status = 1;
+      progress = 1;
     } else if (status === 1 ){
       status = 0;
+      progress = 0;
+    } else if (status === 0 ){
+      status = 0;
+      progress = 0;
     }
 
     const sisa = price - dp;
@@ -515,9 +512,8 @@ exports.updateOrderPesanan = (req, res) => {
           pajak = ?, 
           pesanan = ?, 
           status = ?, 
-          dp = ?,
           sisa = ?,
-          pay = NULL,
+          pay = 0,
           progress = ?
       WHERE id = ?
     `;
@@ -537,7 +533,6 @@ exports.updateOrderPesanan = (req, res) => {
       parseFloat(pajak) || 0,
       JSON.stringify(pesanan),
       status,
-      dp,
       sisa,
       progress,
       id
@@ -593,7 +588,7 @@ exports.updateOrderPesananReservasi = (req, res) => {
   const correctedOrderanBuat = new Date(orderanBuat);
   correctedOrderanBuat.setHours(correctedOrderanBuat.getHours());
 
-  const selectQuery = `SELECT dp, pay, status FROM orders WHERE id = ?`;
+  const selectQuery = `SELECT dp, status FROM orders WHERE id = ?`;
 
   req.db.query(selectQuery, [id], (err, results) => {
     if (err) {
@@ -611,30 +606,19 @@ exports.updateOrderPesananReservasi = (req, res) => {
       });
     }
 
-    // Jika ada nilai pay, pindahkan ke dp
-    let dp = results[0].dp || 0;
-    const existingPay = results[0].pay;
-    
-    if (existingPay && existingPay > 0) {
-      dp = existingPay;
-    }
-
+    const dp = results[0].dp;
     let status = results[0].status;
-    let progress = 0;
 
     if (status === 2) {
       status = 1;
-    } else if (status === 1) {
-      status = 0;
     }
 
-    const sisa = price - dp;
+    const sisa = dp ? price - dp : price;
 
     const updateQuery = `
       UPDATE orders SET 
         normalprice = ?, 
         price = ?, 
-        dp = ?,
         sisa = ?,
         name = ?, 
         noted = ?,
@@ -647,15 +631,16 @@ exports.updateOrderPesananReservasi = (req, res) => {
         from_jam = ?,
         until_jam = ?,
         status_reservasi = 0,
-        status = ?,
-        pay = NULL,
-        progress = ?
+        dp = 0,
+        pay = 0,
+        sisa = 0,
+        status = 0,
+        progress = 0
       WHERE id = ?`;
 
     const values = [
       parseFloat(normalprice),
       parseFloat(price),
-      dp,
       sisa,
       nama,
       noted || null,
@@ -667,8 +652,6 @@ exports.updateOrderPesananReservasi = (req, res) => {
       parseInt(jumlah_orang),
       from_jam,
       until_jam,
-      status,
-      progress,
       id
     ];
 

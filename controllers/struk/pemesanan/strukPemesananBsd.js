@@ -116,7 +116,7 @@ const strukPemesananBsd = async (order) => {
         </head>
         <body>
           <div class="header">
-            <img src="https://bosgil.com/logo.jpeg" alt="Logo" style="width: 260px; height: auto; margin-top:5px"/>
+            <img src="https://bosgilakademi.com/logoBosgil.jpg" alt="Logo" style="width: 260px; height: auto; margin-top:5px"/>
             <div class="title" style="margin-top:8px; font-weight:500;">NASI MANDHI BOSGIL BSD</div>
             <div class="title" style="margin-top:8px; font-weight:500;">${storeAddress}</div>
             <div style="margin-top:8px; class="info">Telp : ${phoneNumber}</div>
@@ -209,7 +209,7 @@ const strukPemesananBsd = async (order) => {
               <div class="underline"></div>
               <div class="batas"></div>
               
-              <div class="info" style="color: #B91C1C; font-weight: bold; text-align: center;">📋 DATA AQIQAH</div>
+              <div class="info" style="color: #B91C1C; font-weight: bold;">DATA AQIQAH</div>
               
               <div class="info">
                 <div class="info">Nama yang di aqiqah: ${parsedPesanan.find(item => item.namaAqiqah)?.namaAqiqah || '-'}</div>
@@ -307,7 +307,7 @@ const strukPemesananBsd = async (order) => {
       <div class="thanks">Instagram : @bosgildahsyat</div>
       <div class="thanks">Tiktok : @bosgildahsyat</div>
       <div style="display:flex; justify-content:center;">
-      <img src="https://bosgil.com/qrfixxx.jpg" alt="qr" style="width: 160px; height: auto; margin-top:10px"/>
+      <img src="https://bosgilakademi.com/QR.jpg" alt="qr" style="width: 160px; height: auto; margin-top:10px"/>
       </div>
       <div class="thanks" style="margin-top:10px;">Terima Kasih</div>
     </body>

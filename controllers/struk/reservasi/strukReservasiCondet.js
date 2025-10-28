@@ -125,7 +125,7 @@ const strukReservasiCondet = async (order) => {
         <body>
           <div class="header">
           <div class="title-reservasi" style="margin-top:20px; margin-bottom:10px font-weight:bold;"><b>NOTA RESERVASI</b></div>
-            <img src="https://bosgil.com/logo.jpeg" alt="Logo" style="width: 260px; height: auto; margin-top:15px"/>
+            <img src="https://bosgilakademi.com/logoBosgil.jpg" alt="Logo" style="width: 260px; height: auto; margin-top:15px"/>
             <div class="title" style="margin-top:10px; font-weight:500;">${outlet}</div>
             <div class="sub-title" style="margin-top:10px; font-weight:500;">${storeAddress}</div>
               <div class="info" style="margin-top:10px;">Admin I ${"     "}: ${phoneNumber}</div>
@@ -258,9 +258,7 @@ const strukReservasiCondet = async (order) => {
             
 
             <div class="info-row">
-              <div class="info">Pembayaran ${
-                order.banklunas === "CASH" ? order.banklunas : order.banklunas
-              } :</div>
+              <div class="info">Pembayaran ${order.banklunas === "CASH" ? "CASH" : order.banklunas} :</div>
               <div class="info-row-format">
                 <div class="info">Rp.</div>
                 <div class="info">${formatHarga(order.pay)}</div>
@@ -289,7 +287,7 @@ const strukReservasiCondet = async (order) => {
           <div class="thanks">Instagram : @bosgildahsyat</div>
           <div class="thanks">Tiktok : @bosgildahsyat</div>
           <div style="display:flex; justify-content:center;">
-          <img src="https://bosgil.com/qrfixxx.jpg" alt="qr" style="width: 160px; height: auto; margin-top:10px"/>
+          <img src="https://bosgilakademi.com/QR.jpg" alt="qr" style="width: 160px; height: auto; margin-top:10px"/>
           </div>
           <div class="thanks" style="margin-top:10px;">Terima Kasih</div>
         </body>

@@ -24,13 +24,12 @@ const adjustTimeDeliver = (timeDeliver) => {
  */
 const notaBandungBuahBatuImage = async (order) => {
   const outlet = "BOSGIL BANDUNG BUAH BATU";
-  const storeAddress = "Jl. RAYA BANDUNG BUAH BATU NO.5 RT.5/RW 6 BANDUNG";
-  const phoneNumber = "08119058817";
-  const phoneNumber1 = "08119291531";
-  const bank_bca = "8840 999 298";
-  const nama_bank_bca = "CV. Makanan Segala Acara";
-  const bank_mandiri = "155 0013 888 980";
-  const nama_bank_mandiri = "CV. Makanan Segala Acara";
+  const storeAddress = "JL. Rancabolang No 225, Sekejati, Buah Batu";
+  const phoneNumber = "0811-8908-817";
+  const bank_bca = "8841 00 7930";
+  const nama_bank_bca = "CV. Makanan Segala Acara Bandung";
+  const bank_mandiri = "155 00 1417 2897";
+  const nama_bank_mandiri = "CV. Makanan Segala Acara Bandung";
   const parsedPesanan = JSON.parse(order.pesanan);
 
   // --- Template HTML dengan Desain Baru ---
@@ -206,10 +205,10 @@ const notaBandungBuahBatuImage = async (order) => {
 
         <!-- Header -->
         <header class="header">
-          <img src="https://bosgil.com/logo.jpeg" alt="Logo Bosgil">
+          <img src="https://bosgilakademi.com/logoBosgil.jpg" alt="Logo Bosgil">
           <div class="outlet-name">${outlet}</div>
           <div class="address">${storeAddress}</div>
-          <div class="phone">Admin 1: ${phoneNumber} | Admin 2: ${phoneNumber1}</div>
+          <div class="phone">Admin 1: ${phoneNumber} </div>
         </header>
 
         <hr class="separator">
@@ -357,7 +356,7 @@ const notaBandungBuahBatuImage = async (order) => {
             IG & TikTok: @bosgildahsyat
           </div>
           
-          <img src="https://bosgil.com/qrfixxx.jpg" alt="QR Code Pembayaran" class="qr-code">
+          <img src="https://bosgilakademi.com/QR.jpg" alt="QR Code Pembayaran" class="qr-code">
           
           <div class="thank-you">Terima Kasih!</div>
         </footer>

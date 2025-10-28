@@ -29,10 +29,9 @@ const adjustTimeDeliver = (timeDeliver) => {
  */
 const strukPemesananBandungBuahBatuImage = async (order) => {
   // --- Informasi Outlet & Kontak ---
-  const outlet = "NASI MANDHI BOSGIL BANDUNG BUAH BATU";
-  const storeAddress = "Jl. RAYA BANDUNG BUAH BATU NO.5 RT.5/RW 6 BANDUNG";
-  const phoneNumber = "08119058817";
-  const phoneNumber1 = "08119291531";
+  const outlet = "BOSGIL BANDUNG BUAH BATU";
+  const storeAddress = "JL. Rancabolang No 225, Sekejati, Buah Batu";
+  const phoneNumber = "0811-8908-817";
   const parsedPesanan = JSON.parse(order.pesanan);
 
   // --- Template HTML dengan Desain Baru ---
@@ -192,10 +191,10 @@ const strukPemesananBandungBuahBatuImage = async (order) => {
 
         <!-- Header -->
         <header class="header">
-          <img src="https://bosgil.com/logo.jpeg" alt="Logo Bosgil">
+          <img src="https://bosgilakademi.com/logoBosgil.jpg" alt="Logo Bosgil">
           <div class="outlet-name">${outlet}</div>
           <div class="address">${storeAddress}</div>
-          <div class="phone">Admin 1: ${phoneNumber} | Admin 2: ${phoneNumber1}</div>
+          <div class="phone">Admin 1: ${phoneNumber}</div>
         </header>
 
         <hr class="separator">
@@ -370,7 +369,7 @@ const strukPemesananBandungBuahBatuImage = async (order) => {
             <br>
             IG & TikTok: @bosgildahsyat
           </div>
-          <img src="https://bosgil.com/qrfixxx.jpg" alt="QR Code" class="qr-code">
+          <img src="https://bosgilakademi.com/QR.jpg" alt="QR Code" class="qr-code">
           <div class="thank-you">Terima Kasih!</div>
         </footer>
 

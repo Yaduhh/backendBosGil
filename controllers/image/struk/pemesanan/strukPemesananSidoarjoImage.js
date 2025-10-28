@@ -24,10 +24,9 @@ const adjustTimeDeliver = (timeDeliver) => {
  */
 
 const strukPemesananSidoarjoImage = async (order) => {
-  const outlet = "NASI MANDHI BOSGIL SIDOARJO";
-  const storeAddress = "Jl. RAYA SIDOARJO NO.5 RT.5/RW 6 SIDOARJO";
-  const phoneNumber = "08119058817";
-  const phoneNumber1 = "08119291531";
+  const outlet = "BOSGIL SIDOARJO";
+  const storeAddress = "Ruko Royal Palace, Jl. Sunandar Priyo Sudarmo Blok J9, Kuthuk, Larangan, Sidoarjo";
+  const phoneNumber = "0811-3116-859";
   const parsedPesanan = JSON.parse(order.pesanan);
 
   return `
@@ -186,10 +185,10 @@ const strukPemesananSidoarjoImage = async (order) => {
 
         <!-- Header -->
         <header class="header">
-          <img src="https://bosgil.com/logo.jpeg" alt="Logo Bosgil">
+          <img src="https://bosgilakademi.com/logoBosgil.jpg" alt="Logo Bosgil">
           <div class="outlet-name">${outlet}</div>
           <div class="address">${storeAddress}</div>
-          <div class="phone">Admin 1: ${phoneNumber} | Admin 2: ${phoneNumber1}</div>
+          <div class="phone">Admin 1: ${phoneNumber}</div>
         </header>
 
         <hr class="separator">
@@ -364,7 +363,7 @@ const strukPemesananSidoarjoImage = async (order) => {
             <br>
             IG & TikTok: @bosgildahsyat
           </div>
-          <img src="https://bosgil.com/qrfixxx.jpg" alt="QR Code" class="qr-code">
+          <img src="https://bosgilakademi.com/QR.jpg" alt="QR Code" class="qr-code">
           <div class="thank-you">Terima Kasih!</div>
         </footer>
 

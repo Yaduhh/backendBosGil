@@ -320,7 +320,12 @@ app.get("/daftarAkun", akunController.getAccounts);
 app.delete("/deleteAkun/:id", akunController.deleteAccount);
 app.put("/editAkun/:id", akunController.editAccount);
 
-// Serve static files from branch-specific directories
+// Import image compression middleware
+const imageCompress = require('./middleware/imageCompress');
+
+// Serve static files from branch-specific directories with compression support
+// Image compression middleware harus diatas express.static
+app.use('/assets', imageCompress);
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

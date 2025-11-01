@@ -16,6 +16,7 @@ dist-ssr
 assets/
 uploads/
 temp/
+*.zip
 
 # Editor directories and files
 .vscode/*

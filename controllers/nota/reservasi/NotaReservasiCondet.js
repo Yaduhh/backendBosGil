@@ -188,11 +188,13 @@ const outlet = "NASI MANDHI BOSGIL CONDET";
               <div class="underline"></div>
               <div class="batas">
               
-              <div class="info">Catatan : ${order.noted}</div>
+             ${order.noted ? `
+<div class="info">Catatan : ${order.noted}</div>
 
               <div class="batas"></div>
               <div class="underline"></div>
               <div class="batas">
+` : ''}
             </div>
                <div class="info">
                 ${parsedPesanan

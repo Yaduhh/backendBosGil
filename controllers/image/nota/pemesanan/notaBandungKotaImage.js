@@ -103,12 +103,13 @@ const notaBandungKotaImage = async (order) => {
           display: grid;
           grid-template-columns: 120px 1fr; /* Kolom untuk label dan isi */
           gap: 6px;
+font-size:16px;
         }
         .info-grid .label {
           color: #4B5563;
         }
         .info-grid .value {
-          font-weight: 500;
+          font-weight: 600;
           word-break: break-word; /* Agar teks panjang tidak overflow */
         }
         .info-grid .value.highlight {

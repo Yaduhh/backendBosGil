@@ -100,12 +100,13 @@ const strukReservasiBintaroImage = async (order) => {
           display: grid;
           grid-template-columns: 130px 1fr;
           gap: 8px;
+          font-size: 16px;
         }
         .info-grid .label {
           color: #4B5563;
         }
         .info-grid .value {
-          font-weight: 500;
+          font-weight: 600;
           word-break: break-word;
         }
         .info-grid .value.highlight {
